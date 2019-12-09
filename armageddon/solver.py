@@ -81,6 +81,29 @@ class Planet():
             self.rhoa = lambda x: rho0
         else:
             raise NotImplementedError
+            
+    def f(t, state):
+        """ RHS function for Lorenz system
+        """
+        f = np.zeros_like(state)
+        # unpack the state vector
+        v, m, theta, z, x = state
+        f[0] = -self.Cd*self.rho0*A*v**2/(2*m) -self.g*np.sin(theta)
+        f[1] = -self.Ch*self.rho0*A*v**3/(2*Q)
+        f[2] = self.g*np.cos(theta)/v - self.Cl*self.rho0*A*v/(2*m) - v*np.cos(theta)/(self.Rp+z)
+        f[3] = -v*np.sin(theta)
+        f[4] = v*np.cos(theta)/(1+z/self.Rp)
+        #f[5] = np.sqrt(7/2*self.alpha*self.rho0/met_den)*v
+        return f
+        
+        # initial condition
+        state0 = np.array([1e3, 1e5, 30, 100000,0])
+        # times we want to get output from ODE solver, use same spacing as
+        # the dt we use on our own solvers
+        dt = 0.01
+        t = np.arange(0.0, 40.0, dt)
+        # solve using odeint
+        states = odeint(f, state0, t, tfirst=True)
 
     def impact(self, radius, velocity, density, strength, angle,
                init_altitude=100e3, dt=0.05, radians=False):
