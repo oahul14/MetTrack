@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt #add ploting
+import scipy.interpolate as si
 
 class Planet():
     """
@@ -283,19 +284,25 @@ class Planet():
     def analyse_outcome(self, result):
         """
         Inspect a prefound solution to calculate the impact and airburst stats
+
         Parameters
         ----------
+
         result : DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
             distance, radius and dedz as a function of time
+
         Returns
         -------
+
         outcome : Dict
             dictionary with details of airburst and/or cratering event.
             For an airburst, this will contain the following keys:
             ``burst_peak_dedz``, ``burst_altitude``, ``burst_total_ke_lost``.
+
             For a cratering event, this will contain the following keys:
             ``impact_time``, ``impact_mass``, ``impact_speed``.
+
             All events should also contain an entry with the key ``outcome``,
             which should contain one of the following strings:
             ``Airburst``, ``Cratering`` or ``Airburst and cratering``
@@ -303,10 +310,9 @@ class Planet():
         # define outcome as a dictionary
         outcome = {}
         # find the maxium dedz and its corresponding burst altitude
-        dedz_max = np.max(result["dedz"])
-        print(dedz_max)
+        dedz_max = np.max(result.dedz)
         # the row where maxium dedz is
-        row_maxdedz = result.loc[result["dedz"] == dedz_max]
+        row_maxdedz = result.loc[result['dedz'] == dedz_max]
         # peak burst altitude
         burst_alt = row_maxdedz.altitude.iloc[0]
         if burst_alt > 5:
@@ -327,7 +333,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
+        total_loss = 0.5*(m_burst*v_burst**2-m0*v0**2)
 
         outcome = {
             "outcome": "Airburst",
@@ -343,8 +349,20 @@ class Planet():
         """
         # find the first row where altitude < 0 
         row_alt = result.loc[result.altitude < 0]
-        # use the row before it to get data for cratering event
-        row_alt0 = result.loc[result.index == row_alt.index[0]-1]
+        row_lower = result.loc[row_alt.index[0] - 10 <= result.index]
+        row_upper = result.loc[(result.index <= row_alt.index[0] + 10)]
+        row_between = pd.merge(row_lower, row_upper, how='inner')
+        # raw data 
+        alt_i = np.array(row_between.altitude)
+        time_i = np.array(row_between.time)
+        mass_i = np.array(row_between.mass)
+        speed_i = np.array(row_between.velocity)
+        lp_time = si.lagrange(alt_i, time_i)
+        lp_mass = si.lagrange(alt_i, mass_i)
+        lp_speed = si.lagrange(alt_i, speed_i)
+        impact_time = lp_time(0)
+        impact_mass = lp_mass(0)
+        impact_speed = lp_speed(0)
         
         # calculate the total energy loss till peak energy loss rate
         # m,v at airburst point and initial condition
@@ -352,16 +370,16 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
+        total_loss = 0.5*(m_burst*v_burst**2-m0*v0**2)
         
         outcome = {
             "outcome": "Airburst and cratering",
             "burst_peak_dedz": row_maxdedz.dedz.iloc[0],
             "burst_altitude": row_maxdedz.dedz.iloc[0],
             "burst_total_ke_lost" : total_loss,
-            "impact_time" : row_alt0.time.iloc[0],
-            "impact_mass" :row_alt0.mass.iloc[0],
-            "impact_speed" :row_alt0.velocity.iloc[0]
+            "impact_time" : impact_time,
+            "impact_mass" : impact_mass,
+            "impact_speed" : impact_speed
         }
         return outcome
 
@@ -371,14 +389,26 @@ class Planet():
         """
         # find the first row where altitude < 0 
         row_alt = result.loc[result.altitude < 0]
-        # use the row before it to get data for cratering event
-        row_alt0 = result.loc[result.index == row_alt.index[0]-1]
+        row_lower = result.loc[row_alt.index[0] - 10 <= result.index]
+        row_upper = result.loc[(result.index <= row_alt.index[0] + 10)]
+        row_between = pd.merge(row_lower, row_upper, how='inner')
+        # raw data 
+        alt_i = np.array(row_between.altitude)
+        time_i = np.array(row_between.time)
+        mass_i = np.array(row_between.mass)
+        speed_i = np.array(row_between.velocity)
+        lp_time = si.lagrange(alt_i, time_i)
+        lp_mass = si.lagrange(alt_i, mass_i)
+        lp_speed = si.lagrange(alt_i, speed_i)
+        impact_time = lp_time(0)
+        impact_mass = lp_mass(0)
+        impact_speed = lp_speed(0)
         
         outcome = {
             "outcome": "Cratering",
-            "impact_time" : row_alt0.time.iloc[0],
-            "impact_mass" :row_alt0.mass.iloc[0],
-            "impact_speed" :row_alt0.velocity.iloc[0]
+            "impact_time" : impact_time,
+            "impact_mass" : impact_mass,
+            "impact_speed" : impact_speed
         }
         return outcome
 
