@@ -296,14 +296,14 @@ class Planet():
         # peak burst altitude
         burst_alt = row_maxdedz.altitude.iloc[0]
         if burst_alt > 5:
-            outcome = airburst(result, row_maxdedz)
+            outcome = self.airburst(result, row_maxdedz)
         elif (burst_alt >= 0) and (burst_alt <=5):
-            outcome = craburst(result, row_maxdedz)
+            outcome = self.craburst(result, row_maxdedz)
         elif burst_alt < 0:
-            outcome = cratering(result)
+            outcome = self.cratering(result)
         return outcome
 
-    def airburst(result, row_maxdedz):
+    def airburst(self, result, row_maxdedz):
         """
         define a function to calculate the outcome when altitude > 5
         """
@@ -313,7 +313,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = 0.5*(m_burst*v_burst**2-m0*v0**2)
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
 
         outcome = {
             "outcome": "Airburst",
@@ -323,7 +323,7 @@ class Planet():
         }
         return outcome
 
-    def craburst(result, row_maxdedz):
+    def craburst(self, result, row_maxdedz):
         """
         define a function to calculate the outcome when 0 <=altitude <= 5
         """
@@ -338,7 +338,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = 0.5*(m_burst*v_burst**2-m0*v0**2)
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
         
         outcome = {
             "outcome": "Airburst and cratering",
@@ -351,7 +351,7 @@ class Planet():
         }
         return outcome
 
-    def cratering(result):
+    def cratering(self, result):
         """
         define a function to calculate the outcome when altitude < 0
         """
