@@ -228,13 +228,22 @@ class Planet():
         m=3000*4/3*np.pi*10**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
         X = self.RK4(state0,0, 20, 0.01, strength, density)
-        return pd.DataFrame({'velocity': X[0][-1, 0],
-                             'mass': X[0][-1, 1],
-                             'angle': X[0][-1, 2],
-                             'altitude': init_altitude,
-                             'distance': X[0][-1, 4],
-                             'radius': X[0][-1, 5],
-                             'time': 0.0}, index=range(1))
+        #
+        result = np.zeros((len(X[0][:, 0])-1, 7))
+        result[:, 0:-1] = X[0][:-1, :]
+        result[:, -1] = X[1][:-1]
+        result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
+        result = self.calculate_energy(result)
+        result = result.fillna(0)
+        return result
+        #return pd.DataFrame({'velocity': X[0][-1, 0],
+                             #'mass': X[0][-1, 1],
+                             #'angle': X[0][-1, 2],
+                             #'altitude': init_altitude,
+                             #'distance': X[0][-1, 4],
+                             #'radius': X[0][-1, 5],
+                             #'dedz': X[0][-1, -1],
+                             #'time': 0.0}, index=range(1))
 
     def calculate_energy(self, result):
         """
@@ -290,9 +299,10 @@ class Planet():
         # define outcome as a dictionary
         outcome = {}
         # find the maxium dedz and its corresponding burst altitude
-        dedz_max = np.max(result.dedz)
+        dedz_max = np.max(result["dedz"])
+        print(dedz_max)
         # the row where maxium dedz is
-        row_maxdedz = result.loc[result['dedz'] == dedz_max]
+        row_maxdedz = result.loc[result["dedz"] == dedz_max]
         # peak burst altitude
         burst_alt = row_maxdedz.altitude.iloc[0]
         if burst_alt > 5:
