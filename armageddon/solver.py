@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt #add ploting
-import scipy.interpolate as si
 
 class Planet():
     """
@@ -315,13 +314,54 @@ class Planet():
         row_maxdedz = result.loc[result['dedz'] == dedz_max]
         # peak burst altitude
         burst_alt = row_maxdedz.altitude.iloc[0]
-        if burst_alt > 5:
+        if burst_alt > 5000:
             outcome = self.airburst(result, row_maxdedz)
-        elif (burst_alt >= 0) and (burst_alt <=5):
+        elif (burst_alt >= 0) and (burst_alt <=5000):
             outcome = self.craburst(result, row_maxdedz)
         elif burst_alt < 0:
             outcome = self.cratering(result)
         return outcome
+
+    def Lagrange_basis_poly(self, xi, x):
+        """Calculate Lagrange basis polynomials.
+        
+        xi is the x-component of the data
+        
+        x is the array of x-locations we want the polynomials evaluated at
+        
+        Returns l, the Lagrange polynomials evaluated at x,
+        so l is an array of size (len(xi), len(x))
+        """
+        # we have N+1 data points, and so the polynomial degree N must be the length of xi minus 1
+        N = len(xi) - 1
+        # the Lagrange basis polynomials are a product, so let's initialise them with 1
+        # (cf. for a summation where we would most likely initialise with zero)
+        # we have N+1 of them, and we want their values at locations x, hence size (N+1)xlen(x)
+        l = np.ones((N+1, len(x)))
+        # we want to iterate over i ranging from zero to N
+        for i in range(0, N+1):
+            for m in range(0, N+1):
+                if (m != i):
+                    l[i, :] = l[i, :] * (x - xi[m]) / (xi[i] - xi[m])
+        return l
+
+
+    def Lagrange_interp_poly(self, xi, yi, x):
+        """Calculates Lagrange interpolation polynomial from N+1 data points.
+        
+        (xi, yi) are the N+1 data points (0, 1, ..., N)
+        
+        x is an array of x-locations the polynomial is evaluated at
+        
+        Returns L, the Lagrange interpolation polynomial evaluated at x
+        """
+        # first call our function above to calculate the individual basis functions l
+        l = self.Lagrange_basis_poly(xi, x)
+        # L is our Lagrange polynomial evaluated at the locations x
+        L = np.zeros_like(x)
+        for i in range(0, len(xi)):
+            L = L + yi[i] * l[i]
+        return L
 
     def airburst(self, result, row_maxdedz):
         """
@@ -333,7 +373,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = 0.5*(m_burst*v_burst**2-m0*v0**2)
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
 
         outcome = {
             "outcome": "Airburst",
@@ -357,12 +397,9 @@ class Planet():
         time_i = np.array(row_between.time)
         mass_i = np.array(row_between.mass)
         speed_i = np.array(row_between.velocity)
-        lp_time = si.lagrange(alt_i, time_i)
-        lp_mass = si.lagrange(alt_i, mass_i)
-        lp_speed = si.lagrange(alt_i, speed_i)
-        impact_time = lp_time(0)
-        impact_mass = lp_mass(0)
-        impact_speed = lp_speed(0)
+        impact_time = float(self.Lagrange_interp_poly(alt_i, time_i, [0]))
+        impact_mass = float(self.Lagrange_interp_poly(alt_i, mass_i, [0]))
+        impact_speed = float(self.Lagrange_interp_poly(alt_i, speed_i, [0]))
         
         # calculate the total energy loss till peak energy loss rate
         # m,v at airburst point and initial condition
@@ -370,7 +407,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = 0.5*(m_burst*v_burst**2-m0*v0**2)
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
         
         outcome = {
             "outcome": "Airburst and cratering",
@@ -397,12 +434,10 @@ class Planet():
         time_i = np.array(row_between.time)
         mass_i = np.array(row_between.mass)
         speed_i = np.array(row_between.velocity)
-        lp_time = si.lagrange(alt_i, time_i)
-        lp_mass = si.lagrange(alt_i, mass_i)
-        lp_speed = si.lagrange(alt_i, speed_i)
-        impact_time = lp_time(0)
-        impact_mass = lp_mass(0)
-        impact_speed = lp_speed(0)
+        impact_time = float(self.Lagrange_interp_poly(alt_i, time_i, [0]))
+        impact_mass = float(self.Lagrange_interp_poly(alt_i, mass_i, [0]))
+        impact_speed = float(self.Lagrange_interp_poly(alt_i, speed_i, [0]))
+        
         
         outcome = {
             "outcome": "Cratering",
@@ -411,6 +446,7 @@ class Planet():
             "impact_speed" : impact_speed
         }
         return outcome
+
 
 
 x = Planet(atmos_func='mars')
