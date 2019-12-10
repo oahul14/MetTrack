@@ -78,11 +78,11 @@ class Planet():
         v, m, theta, z, x, r = state 
         atmo_den = 1.2*np.exp(-z/8000)
         A = np.pi*r**2
-        f[0] = -Cd*atmo_den*A*v**2/(2*m) +g*np.sin(theta)
-        f[1] = -Ch*atmo_den*A*v**3/(2*Q)
-        f[2] = g*np.cos(theta)/v - Cl*atmo_den*A*v/(2*m) - v*np.cos(theta)/(Rp+z)
+        f[0] = -self.Cd*atmo_den*A*v**2/(2*m) +self.g*np.sin(theta)
+        f[1] = -self.Ch*atmo_den*A*v**3/(2*self.Q)
+        f[2] = self.g*np.cos(theta)/v - self.Cl*atmo_den*A*v/(2*m) - v*np.cos(theta)/(self.Rp+z)
         f[3] = -v*np.sin(theta)
-        f[4] = v*np.cos(theta)/(1+z/Rp)
+        f[4] = v*np.cos(theta)/(1+z/self.Rp)
         f[5] = 0
         return f
 
