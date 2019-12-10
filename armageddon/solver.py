@@ -69,14 +69,14 @@ class Planet():
         else:
             raise NotImplementedError
 
-    def f(self, t, state):
+    def f(self, t, state, atmo_den):
         """ Coupled ODEs when ram pressure is 
         below strength (no changes in radius)
         """
         f = np.zeros_like(state)
         # unpack the state vector
         v, m, theta, z, x, r = state 
-        atmo_den = 1.2*np.exp(-z/8000)
+        #atmo_den = 1.2*np.exp(-z/8000)
         A = np.pi*r**2
         f[0] = -self.Cd*atmo_den*A*v**2/(2*m) +self.g*np.sin(theta)
         f[1] = -self.Ch*atmo_den*A*v**3/(2*self.Q)
@@ -86,14 +86,14 @@ class Planet():
         f[5] = 0
         return f
 
-    def f2(self, t, state, density):
+    def f2(self, t, state, density, atmo_den):
         """ Coupled ODEs when ram pressure is 
         above strength (changes in radius and in area)
         """
         f2 = np.zeros_like(state)
         # unpack the state vector
         v, m, theta, z, x, r = state  
-        atmo_den = 1.2*np.exp(-z/8000)
+        #atmo_den = 1.2*np.exp(-z/8000)
         A = np.pi*r**2
         f2[0] = -(self.Cd*atmo_den*A*v**2)/(2*m) + self.g*np.sin(theta)
         f2[1] = -(self.Ch*atmo_den*A*v**3)/(2*self.Q)
@@ -109,17 +109,17 @@ class Planet():
         u_all = [u0]
         t_all = [t0]
         while t < t_max:
-            atmo_den = 1.2*np.exp(u[3]/8000)
+            atmo_den = 1.2*np.exp(-u[3]/8000)
             if atmo_den*u[0]**2 > Y:
-                k1 = dt*self.f2(t, u, density)
-                k2 = dt*self.f2(t + 0.5*dt, u + 0.5*k1, density)
-                k3 = dt*self.f2(t + 0.5*dt, u + 0.5*k2, density)
-                k4 = dt*self.f2(t + dt, u + k3, density) 
+                k1 = dt*self.f2(t, u, density, atmo_den)
+                k2 = dt*self.f2(t + 0.5*dt, u + 0.5*k1, density, atmo_den)
+                k3 = dt*self.f2(t + 0.5*dt, u + 0.5*k2, density, atmo_den)
+                k4 = dt*self.f2(t + dt, u + k3, density, atmo_den) 
             else: #if below threshold => 
-                k1 = dt*self.f(t, u)
-                k2 = dt*self.f(t + 0.5*dt, u + 0.5*k1)
-                k3 = dt*self.f(t + 0.5*dt, u + 0.5*k2)
-                k4 = dt*self.f(t + dt, u + k3)
+                k1 = dt*self.f(t, u, atmo_den)
+                k2 = dt*self.f(t + 0.5*dt, u + 0.5*k1, atmo_den)
+                k3 = dt*self.f(t + 0.5*dt, u + 0.5*k2, atmo_den)
+                k4 = dt*self.f(t + dt, u + k3, atmo_den)
             u = (u + (1./6.)*(k1 + 2*k2 + 2*k3 + k4))
             u_all.append(u)
             t = t + dt
@@ -233,8 +233,8 @@ class Planet():
         result[:, 0:-1] = X[0][:-1, :]
         result[:, -1] = X[1][:-1]
         result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
-        result = self.calculate_energy(result)
-        result = result.fillna(0)
+        #result = self.calculate_energy(result)
+        #result = result.fillna(0)
         return result
         #return pd.DataFrame({'velocity': X[0][-1, 0],
                              #'mass': X[0][-1, 1],
