@@ -266,8 +266,8 @@ class Planet():
         result = result.copy()
         res = 1/2*result["mass"]*result["velocity"]**2
         res = res.diff().abs()
-        result.insert(len(result.columns),
-                      'dedz', res)     
+        if "dedz" not in result:
+            result.insert(len(result.columns),'dedz', res)    
         return result
 
     def analyse_outcome(self, result):
