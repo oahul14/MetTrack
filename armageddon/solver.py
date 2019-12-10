@@ -56,14 +56,14 @@ class Planet():
         self.g = g
         self.H = H
         self.rho0 = rho0
-        flag = 0 #flag variable to select atmosphere
+        self.flag = 0 #flag variable to select atmosphere
 
         if atmos_func == 'exponential':
-            flag = 0
+            self.flag = 0
         elif atmos_func == 'tabular':
             raise NotImplementedError
         elif atmos_func == 'mars':
-            raise NotImplementedError
+            self.flag = 2
         elif atmos_func == 'constant':
             self.rhoa = lambda x: rho0
         else:
@@ -109,12 +109,22 @@ class Planet():
         u_all = [u0]
         t_all = [t0]
         while t < t_max:
-            atmo_den = 1.2*np.exp(-u[3]/8000)
+            if self.flag == 0:
+                atmo_den = 1.2*np.exp(-u[3]/8000)
+            elif self.flag == 2:
+                if u[3] >= 7000.:
+                    T = 249.7-0.00222*u[3]
+                else:
+                    T = 242.1-0.000998*u[3]
+                p = 0.699*np.exp(-0.00009*u[3])
+                atmo_den = p/(0.1921*T)
+              
+
             if atmo_den*u[0]**2 > Y:
                 k1 = dt*self.f2(t, u, density, atmo_den)
                 k2 = dt*self.f2(t + 0.5*dt, u + 0.5*k1, density, atmo_den)
                 k3 = dt*self.f2(t + 0.5*dt, u + 0.5*k2, density, atmo_den)
-                k4 = dt*self.f2(t + dt, u + k3, density, atmo_den) 
+                k4 = dt*self.f2(t + dt, u + k3, density, atmo_den)
             else: #if below threshold => 
                 k1 = dt*self.f(t, u, atmo_den)
                 k2 = dt*self.f(t + 0.5*dt, u + 0.5*k1, atmo_den)
@@ -233,8 +243,8 @@ class Planet():
         result[:, 0:-1] = X[0][:-1, :]
         result[:, -1] = X[1][:-1]
         result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
-        #result = self.calculate_energy(result)
-        #result = result.fillna(0)
+        result = self.calculate_energy(result)
+        result = result.fillna(0)
         return result
         #return pd.DataFrame({'velocity': X[0][-1, 0],
                              #'mass': X[0][-1, 1],
@@ -273,25 +283,19 @@ class Planet():
     def analyse_outcome(self, result):
         """
         Inspect a prefound solution to calculate the impact and airburst stats
-
         Parameters
         ----------
-
         result : DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
             distance, radius and dedz as a function of time
-
         Returns
         -------
-
         outcome : Dict
             dictionary with details of airburst and/or cratering event.
             For an airburst, this will contain the following keys:
             ``burst_peak_dedz``, ``burst_altitude``, ``burst_total_ke_lost``.
-
             For a cratering event, this will contain the following keys:
             ``impact_time``, ``impact_mass``, ``impact_speed``.
-
             All events should also contain an entry with the key ``outcome``,
             which should contain one of the following strings:
             ``Airburst``, ``Cratering`` or ``Airburst and cratering``
@@ -379,6 +383,10 @@ class Planet():
         return outcome
 
 
+x = Planet(atmos_func='mars')
+frame, out = x.impact(10, 20e3, 3000, 3000, 45) #radius, velocity, density, strength, angle
+print(out)
+frame.head()
 x = Planet()
 frame, out = x.impact(10, 20e3, 3000, 3000, 45) #radius, velocity, density, strength, angle
 print(out)
