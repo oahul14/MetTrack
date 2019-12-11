@@ -61,7 +61,7 @@ class Planet():
         if atmos_func == 'exponential':
             self.flag = 0
         elif atmos_func == 'tabular':
-            raise NotImplementedError
+            self.flag = 1
         elif atmos_func == 'mars':
             self.flag = 2
         elif atmos_func == 'constant':
@@ -111,6 +111,9 @@ class Planet():
         while t < t_max:
             if self.flag == 0:
                 atmo_den = 1.2*np.exp(-u[3]/8000)
+            elif self.flag == 1:
+                atmo_den = self.tabular_df.loc\
+                    [np.abs(self.tabular_df[0]-u[3]) <= 5.][1].values[0]
             elif self.flag == 2:
                 if u[3] >= 7000.:
                     T = 249.7-0.00222*u[3]
@@ -182,6 +185,7 @@ class Planet():
             which should contain one of the following strings:
             ``Airburst``, ``Cratering`` or ``Airburst and cratering``
         """
+        angle = angle*np.pi/180
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
         X = self.RK4(state0,0, 20, 0.01, strength, density)
