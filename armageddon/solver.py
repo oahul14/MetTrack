@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt #add ploting
@@ -47,6 +46,7 @@ class Planet():
         None
         """
 
+
         # Input constants
         self.Cd = Cd
         self.Ch = Ch
@@ -62,7 +62,7 @@ class Planet():
         if atmos_func == 'exponential':
             self.flag = 0
         elif atmos_func == 'tabular':
-            raise NotImplementedError
+            self.flag = 1
         elif atmos_func == 'mars':
             self.flag = 2
         elif atmos_func == 'constant':
@@ -112,6 +112,9 @@ class Planet():
         while t < t_max:
             if self.flag == 0:
                 atmo_den = 1.2*np.exp(-u[3]/8000)
+            elif self.flag == 1:
+                atmo_den = self.tabular_df.loc\
+                    [np.abs(self.tabular_df[0]-u[3]) <= 5.][1].values[0]
             elif self.flag == 2:
                 if u[3] >= 7000.:
                     T = 249.7-0.00222*u[3]
@@ -183,19 +186,30 @@ class Planet():
             which should contain one of the following strings:
             ``Airburst``, ``Cratering`` or ``Airburst and cratering``
         """
+        
+        # filtering tests for inputs:
+        assert radius > 0, "Radius must be a positive value"
+        assert velocity > 0, "Velocity must be a positive value"
+        assert density > 0, "Density must be a positive value"
+        assert strength > 0, "Strength must be a positive value"
+        assert 0 < angle <= 90, "Angle must be in range 0 < angle <= 90"
+           
+        angle = angle*np.pi/180 # converting to 
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
-        X = self.RK4(state0,0, 20, 0.01, strength, density)
+        X = self.RK4(state0,0, 400, 0.01, strength, density)
         #dedz= np.array(1/2*X[0][:, 1]*X[0][:, 0]**2)
         #dedz = abs(np.diff(dedz))
         result = np.zeros((len(X[0][:, 0])-1, 7))
         result[:, 0:-1] = X[0][:-1, :]
-        result[:, -1] = X[1][:-1]
+        result[:, -1] = (X[1][:-1])
+        print(result[:, -1])
+        result[:,2] = result[:,2]*(180/np.pi) # converting back to degrees for output
         result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
         result = self.calculate_energy(result)
         result = result.fillna(0)
-#        plt.figure()
-#        plt.plot(result["dedz"], result["altitude"])
+        plt.figure()
+        plt.plot(result["dedz"], result["altitude"])
         outcome = self.analyse_outcome(result)
         return result, outcome
 
@@ -275,10 +289,11 @@ class Planet():
         # Replace these lines with your code to add the dedz column to
         # the result DataFrame
         result = result.copy()
-        res = 1/2*result["mass"]*result["velocity"]**2
-        res = res.diff().abs()
-        if "dedz" not in result:
-            result.insert(len(result.columns),'dedz', res)    
+        de = (1/2*result["mass"]*result["velocity"]**2)
+        de = de.diff().abs()/(4.184*10**9)
+        dz = result["altitude"].diff().abs()
+        res = de/dz
+        result.insert(len(result.columns),'dedz', res)    
         return result
 
     def analyse_outcome(self, result):
@@ -305,6 +320,7 @@ class Planet():
         outcome = {}
         # find the maxium dedz and its corresponding burst altitude
         dedz_max = np.max(result["dedz"])
+        print(dedz_max)
         # the row where maxium dedz is
         row_maxdedz = result.loc[result["dedz"] == dedz_max]
         # peak burst altitude
@@ -387,7 +403,15 @@ class Planet():
 #frame, out = x.impact(10, 20e3, 3000, 3000, 45) #radius, velocity, density, strength, angle
 #print(out)
 #frame.head()
-#x = Planet()
-#frame, out = x.impact(10, 20e3, 3000, 3000, 45) #radius, velocity, density, strength, angle
-#print(out)
-#frame.head()
+x = Planet()
+result, out = x.impact(10, 20e3, 3000, 10e5, 45) #radius, velocity, density, strength, angle
+print(out)
+plt.figure()
+plt.plot(result["altitude"], result["dedz"])
+plt.grid()
+#plt.show()
+#plt.plot(result["altitude"], result["velocity"])
+#plt.grid()
+plt.show()
+print(result)
+
