@@ -109,7 +109,11 @@ class Planet():
         t = np.array(t0)
         u_all = [u0]
         t_all = [t0]
+        #t_max = 0.5
         while t < t_max:
+            
+
+            
             if self.flag == 0:
                 atmo_den = 1.2*np.exp(-u[3]/8000)
             elif self.flag == 1:
@@ -134,10 +138,18 @@ class Planet():
                 k2 = dt*self.f(t + 0.5*dt, u + 0.5*k1, atmo_den)
                 k3 = dt*self.f(t + 0.5*dt, u + 0.5*k2, atmo_den)
                 k4 = dt*self.f(t + dt, u + k3, atmo_den)
+
+            
             u = (u + (1./6.)*(k1 + 2*k2 + 2*k3 + k4))
             u_all.append(u)
             t = t + dt
-            t_all.append(t)              
+            t_all.append(t) 
+
+#            if u[3] <= 0.: # stops if altitude < 0         
+#                break
+#            if u[2] <= 0.: # stops if mass < 0
+#                break
+           
         return np.array(u_all), np.array(t_all)
 
     def impact(self, radius, velocity, density, strength, angle,
@@ -203,7 +215,6 @@ class Planet():
         result = np.zeros((len(X[0][:, 0])-1, 7))
         result[:, 0:-1] = X[0][:-1, :]
         result[:, -1] = (X[1][:-1])
-        print(result[:, -1])
         result[:,2] = result[:,2]*(180/np.pi) # converting back to degrees for output
         result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
         result2 = self.calculate_energy(result)
@@ -248,7 +259,7 @@ class Planet():
             ``distance``, ``radius``, ``time``
         """
 
-        m=3000*4/3*np.pi*10**3
+        m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
         X = self.RK4(state0,0, 20, 0.01, strength, density)
         #
@@ -288,8 +299,8 @@ class Planet():
         # the result DataFrame
         result = result.copy()
         de = (1/2*result["mass"]*result["velocity"]**2)
-        de = de.diff().abs()/(4.184*10**9)
-        dz = result["altitude"].diff().abs()
+        de = de.diff()/(4.184*10**9)
+        dz = result["altitude"].diff()
         res = de/dz
         result.insert(len(result.columns),'dedz', res)    
         return result
@@ -319,17 +330,18 @@ class Planet():
         # find the maxium dedz and its corresponding burst altitude
         result2 = self.calculate_energy(result)
         dedz_max = np.max(result2["dedz"])
-        print(dedz_max)
         # the row where maxium dedz is
         row_maxdedz = result2.loc[result2["dedz"] == dedz_max]
         # peak burst altitude
         burst_alt = row_maxdedz.altitude.iloc[0]
-        if burst_alt > 5:
+        print('burst alt:', burst_alt)
+        if burst_alt > 5000:
             outcome = self.airburst(result2, row_maxdedz)
-        elif (burst_alt >= 0) and (burst_alt <=5):
+        elif (burst_alt >= 0) and (burst_alt <=5000):
             outcome = self.craburst(result2, row_maxdedz)
         elif burst_alt < 0:
             outcome = self.cratering(result2)
+        print('broken2')
         return outcome
 
     def airburst(self, result, row_maxdedz):
@@ -342,7 +354,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))/(4.184*10**12)
 
         outcome = {
             "outcome": "Airburst",
@@ -350,6 +362,7 @@ class Planet():
             "burst_altitude": row_maxdedz.altitude.iloc[0],
             "burst_total_ke_lost" : total_loss
         }
+        print('burst altitude:', row_maxdedz.altitude.iloc[0])
         return outcome
 
     def craburst(self, result, row_maxdedz):
@@ -359,6 +372,8 @@ class Planet():
         # find the first row where altitude < 0 
         row_alt = result.loc[result.altitude < 0]
         # use the row before it to get data for cratering event
+        print('broken3')
+        print(result.altitude)
         row_alt0 = result.loc[result.index == row_alt.index[0]-1]
         
         # calculate the total energy loss till peak energy loss rate
@@ -367,12 +382,12 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))/(4.184*10**12)
         
         outcome = {
             "outcome": "Airburst and cratering",
             "burst_peak_dedz": row_maxdedz.dedz.iloc[0],
-            "burst_altitude": row_maxdedz.dedz.iloc[0],
+            "burst_altitude": row_maxdedz.altitude.iloc[0],
             "burst_total_ke_lost" : total_loss,
             "impact_time" : row_alt0.time.iloc[0],
             "impact_mass" :row_alt0.mass.iloc[0],
@@ -397,6 +412,41 @@ class Planet():
         }
         return outcome
 
-x = Planet()
-m,out = x.impact(10, 20e3, 3000, 10e5, 45)
-print(m.head())
+#x = Planet()
+#result, outcome = x.impact(10, 20e3, 3000, 10e5, 45)
+#plt.plot(result['altitude'], result['dedz'])
+#plt.grid()
+#print('outcome')
+#print(outcome)
+#plt.show()
+#plt.plot(result['altitude'], result['velocity'])
+#plt.grid()
+#
+#plt.show()
+#plt.plot(result['altitude'], result['mass'])
+#plt.grid()
+#
+#plt.show()
+#plt.plot(result['altitude'], result['angle'])
+#plt.ylim([44,46])
+#
+#plt.show()
+#plt.plot(result['altitude'], result['radius'])
+#plt.grid()
+#
+#plt.show()
+#plt.plot(result['altitude'], result['distance'])
+#plt.grid()
+#
+#plt.grid()
+#
+#plt.show()
+#
+#######
+##1. solve atmos
+##2. calc ener
+##3. anal out
+#
+##should be same as solve impact
+#print(outcome)
+#print(result)
