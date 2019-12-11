@@ -90,7 +90,7 @@ def solve_ensemble(
         fiducial_impact['angle'] = fiducial_impact['angle'] * 180/np.pi
 
     #Number of samples
-    N = 1000
+    N = 100
     prob_distribution = np.random.uniform(0.0,1.0,N)
 
     distribution = Dist(prob_distribution)
@@ -101,28 +101,45 @@ def solve_ensemble(
         # Remove these as you implement each distribution
         if var == 'radius':
             radius_dist = distribution.inverse_radius_distribution(rmin,rmax)
+            fiducial_impact['radius'] = radius_dist
             ensemble_df['radius'] = radius_dist
         if var == 'angle':
-            angle_dist = (distribution.inverse_angle_distribution)
+            angle_dist = distribution.inverse_angle_distribution()
             angle_dist = angle_dist*180/np.pi     #convert to degrees
+            fiducial_impact['angle'] = angle_dist
             ensemble_df['angle'] = angle_dist
         if var == 'strength':
             strength_dist = distribution.inverse_strength_distribution()
+            fiducial_impact['strength'] = strength_dist
             ensemble_df['strength'] = strength_dist
         if var == 'velocity':
             velocity_dist = distribution.inverse_velocity_distribution()
             impact_dist = np.sqrt( (11e3)**2 + (velocity_dist*1000)**2 )
+            fiducial_impact['velocity'] = impact_dist
             ensemble_df['velocity'] = impact_dist
         if var == 'density':
             density_dist = distribution.inverse_density_distribution()
+            fiducial_impact['density'] = density_dist
             ensemble_df['density'] = density_dist
 
     #check for parameters in fiducial_impact that are not in variables
     const_vals = np.setdiff1d([*fiducial_impact], variables)
-
     
-    # Implement your ensemble function here
-    ensemble_df = pd.DataFrame
-    planet
-
-    return pd.DataFrame(columns=variables+['burst_altitude'], index=range(0))
+    for val in const_vals:
+        fiducial_impact[val] = [fiducial_impact[val]] * N
+        fiducial_impact[val] = np.array(fiducial_impact[val])
+     
+    burst_altitude = []
+    
+    for rad,ang,vel,dens,stren in np.stack([fiducial_impact['radius'], fiducial_impact['angle'], 
+                                            fiducial_impact['velocity'],fiducial_impact['density'], 
+                                            fiducial_impact['strength']], axis = -1):
+            _, output = planet.impact(rad,vel,dens,stren,ang)
+            if 'burst_altitude' in output:
+                burst_altitude.append(output['burst_altitude'])
+            else:
+                burst_altitude.append(0.0)
+    
+    ensemble_df['burst_altitude'] = np.array(burst_altitude)
+    
+    return ensemble_df
