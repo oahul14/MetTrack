@@ -21,7 +21,7 @@ def solve_analytical(Cd=1.0, r=10, H=8000, v0=20e3, theta=45, rho0=3000):
     #theta = 45 # trajectory angle from horizontal
     z0 = 100e3 # initial z-position
     x0 = 0
-    
+    theta = theta*pi/180 # convert to radians
     # calc mass:
     rho = rho0 # density
     vol = (4/3)*pi*r**3 # volume
@@ -51,7 +51,6 @@ def solve_analytical(Cd=1.0, r=10, H=8000, v0=20e3, theta=45, rho0=3000):
     ivp_sol = solve_ivp(f, [t_0, t_f], state_0, t_eval = t)
     
     return z, V, ivp_sol
-
 
 ## plotting ##
 #def plotting(z, V, v0, ivp_sol):
