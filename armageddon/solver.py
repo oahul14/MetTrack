@@ -489,43 +489,44 @@ class Planet():
             "impact_speed" :row_alt0.velocity.iloc[0]
         }
         return outcome
+    
 
-x = Planet()
-result, outcome = x.impact(10, 20e3, 3000, 10e5, 45)
-
-plt.plot(result['altitude'], result['dedz'])
-plt.grid()
-print('outcome')
-print(outcome)
-plt.show()
-plt.plot(result['altitude'], result['velocity'])
-plt.grid()
-
-plt.show()
-plt.plot(result['altitude'], result['mass'])
-plt.grid()
-
-plt.show()
-plt.plot(result['altitude'], result['angle'])
-#plt.ylim([44,46])
-
-plt.show()
-plt.plot(result['altitude'], result['radius'])
-plt.grid()
-
-plt.show()
-plt.plot(result['altitude'], result['distance'])
-plt.grid()
-
-plt.grid()
-
-plt.show()
-
-######
-#1. solve atmos
-#2. calc ener
-#3. anal out
-
-#should be same as solve impact
-print(outcome)
-#print(result)
+#        
+#
+#x = Planet()
+#result, outcome = x.impact(10, 20e3, 3000, 10e5, 45)
+#
+#plt.plot(result['altitude'], result['dedz'])
+#plt.grid()
+#print('outcome')
+#print(outcome)
+#plt.show()
+#plt.plot(result['altitude'], result['velocity'])
+#plt.grid()
+#
+#plt.show()
+#plt.plot(result['altitude'], result['mass'])
+#plt.grid()
+#
+#plt.show()
+#plt.plot(result['altitude'], result['angle'])
+##plt.ylim([44,46])
+#
+#plt.show()
+#plt.plot(result['altitude'], result['radius'])
+#plt.grid()
+#
+#plt.show()
+#plt.plot(result['altitude'], result['distance'])
+#plt.grid()
+#
+#plt.grid()
+#
+#plt.show()
+#
+#######
+##1. solve atmos
+##2. calc ener
+##3. anal out
+#
+##should be same as solve impact

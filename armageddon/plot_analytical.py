@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-def solve_analytical(Cd=1.0, r=10, H=8000, v0=20e3, theta=45, rho0=3000):
+def solve_analytical(Cd=1.0, r=10, H=8000, v0=20e3, theta=45, rho0=3000, dt=0.1):
     ## input variables ##
     #H = 8000 # atmospheric scale height
     #Cd = 1 # drag coefficient
@@ -30,7 +30,6 @@ def solve_analytical(Cd=1.0, r=10, H=8000, v0=20e3, theta=45, rho0=3000):
     # timestepping parameters:
     t_0 = 0 # initisal time
     t_f = 17 # final times
-    dt = 0.1 # timestep
     state_0 = np.array([v0, z0, x0]) # initial array for solver
     z = linspace(0,100000,100) # z array
     t = np.arange(t_0, t_f, dt) # time array

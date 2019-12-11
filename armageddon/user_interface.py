@@ -107,7 +107,8 @@ def plot_an(entries):
     plt.xlabel('z (m)')
     plt.ylabel('velocity (m^2/s')
     plt.legend(['Analytical','ivp solve', 'Our solver'])
-    plt.show()    
+    plt.show()   
+    
 
 if __name__ == '__main__':
     root = tk.Tk()
