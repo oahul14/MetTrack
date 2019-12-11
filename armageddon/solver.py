@@ -187,23 +187,22 @@ class Planet():
             ``Airburst``, ``Cratering`` or ``Airburst and cratering``
         """
         
-        # filtering tests for inputs:
-        assert radius > 0, "Radius must be a positive value"
-        assert velocity > 0, "Velocity must be a positive value"
-        assert density > 0, "Density must be a positive value"
-        assert strength > 0, "Strength must be a positive value"
-        assert 0 < angle <= 90, "Angle must be in range 0 < angle <= 90"
+#        # filtering tests for inputs:
+#        assert radius >= 0, "Radius must be a positive value"
+#        assert velocity >= 0, "Velocity must be a positive value"
+#        assert density >= 0, "Density must be a positive value"
+#        assert strength >= 0, "Strength must be a positive value"
+#        assert 0 <= angle <= 90, "Angle must be in range 0 < angle <= 90"
            
         angle = angle*np.pi/180 # converting to 
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
-        X = self.RK4(state0,0, 400, 0.01, strength, density)
+        X = self.RK4(state0,0, 20, 0.01, strength, density)
         #dedz= np.array(1/2*X[0][:, 1]*X[0][:, 0]**2)
         #dedz = abs(np.diff(dedz))
         result = np.zeros((len(X[0][:, 0])-1, 7))
         result[:, 0:-1] = X[0][:-1, :]
         result[:, -1] = (X[1][:-1])
-        print(result[:, -1])
         result[:,2] = result[:,2]*(180/np.pi) # converting back to degrees for output
         result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
         result = self.calculate_energy(result)
@@ -256,7 +255,7 @@ class Planet():
         result[:, 0:-1] = X[0][:-1, :]
         result[:, -1] = X[1][:-1]
         result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
-        result = self.calculate_energy(result)
+        #result = self.calculate_energy(result)
         result = result.fillna(0)
         return result
         #return pd.DataFrame({'velocity': X[0][-1, 0],
@@ -318,14 +317,13 @@ class Planet():
         outcome = {}
         # find the maxium dedz and its corresponding burst altitude
         dedz_max = np.max(result["dedz"])
-        print(dedz_max)
         # the row where maxium dedz is
         row_maxdedz = result.loc[result["dedz"] == dedz_max]
         # peak burst altitude
         burst_alt = row_maxdedz.altitude.iloc[0]
-        if burst_alt > 5:
+        if burst_alt > 5000:
             outcome = self.airburst(result, row_maxdedz)
-        elif (burst_alt >= 0) and (burst_alt <=5):
+        elif (burst_alt >= 0) and (burst_alt <=5000):
             outcome = self.craburst(result, row_maxdedz)
         elif burst_alt < 0:
             outcome = self.cratering(result)
@@ -341,7 +339,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))/(4.184*10**12)
 
         outcome = {
             "outcome": "Airburst",
@@ -366,7 +364,7 @@ class Planet():
         v_burst = result.loc[row_maxdedz.index[0], 'velocity']
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
-        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))
+        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))/(4.184*10**12)
         
         outcome = {
             "outcome": "Airburst and cratering",
@@ -401,13 +399,19 @@ class Planet():
 ###frame, out = x.impact(10, 20e3, 3000, 3000, 45) #radius, velocity, density, strength, angle
 ###print(out)
 ###frame.head()
-##x = Planet()
-#result, out = x.impact(10, 20e3, 3000, 10e5, 45) #radius, velocity, density, strength, angle
-#plt.figure()
-#plt.plot(result["altitude"], result["velocity"])
-##plt.grid()
-###plt.show()
-###plt.plot(result["altitude"], result["velocity"])
-###plt.grid()
+#x = Planet()
+#result, out = x.impact(10, 20e3, 3000, 4e5, 45) #radius, velocity, density, strength, angle
+#print(out)
+#print(result)
+##plt.plot(result["altitude"], result["velocity"])
+##plt.show
+#
+#plt.plot(result["altitude"], result["dedz"])
+#plt.show()
+
+#plt.grid()
 ##plt.show()
+##plt.plot(result["altitude"], result["velocity"])
+##plt.grid()
+#plt.show()
 
