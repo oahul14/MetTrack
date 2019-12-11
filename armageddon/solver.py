@@ -208,8 +208,6 @@ class Planet():
         result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
         result = self.calculate_energy(result)
         result = result.fillna(0)
-        plt.figure()
-        plt.plot(result["dedz"], result["altitude"])
         outcome = self.analyse_outcome(result)
         return result, outcome
 
@@ -399,19 +397,17 @@ class Planet():
         return outcome
 
 
-#x = Planet(atmos_func='mars')
-#frame, out = x.impact(10, 20e3, 3000, 3000, 45) #radius, velocity, density, strength, angle
-#print(out)
-#frame.head()
-x = Planet()
-result, out = x.impact(10, 20e3, 3000, 10e5, 45) #radius, velocity, density, strength, angle
-print(out)
-plt.figure()
-plt.plot(result["altitude"], result["dedz"])
-plt.grid()
-#plt.show()
+##x = Planet(atmos_func='mars')
+###frame, out = x.impact(10, 20e3, 3000, 3000, 45) #radius, velocity, density, strength, angle
+###print(out)
+###frame.head()
+##x = Planet()
+#result, out = x.impact(10, 20e3, 3000, 10e5, 45) #radius, velocity, density, strength, angle
+#plt.figure()
 #plt.plot(result["altitude"], result["velocity"])
-#plt.grid()
-plt.show()
-print(result)
+##plt.grid()
+###plt.show()
+###plt.plot(result["altitude"], result["velocity"])
+###plt.grid()
+##plt.show()
 
