@@ -114,3 +114,6 @@ def test_ensemble(planet, armageddon):
 
     assert 'burst_altitude' in ensemble.columns
     
+    
+    
+    
