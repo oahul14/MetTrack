@@ -8,11 +8,28 @@ This tool predicts the fate of asteroids entering Earth’s atmosphere for the p
 
 ### Installation Guide
 
-*To be written*
+The tool uses Python and the following Python libraries: Numpy, Scipy, Pandas, Dask, Itertools and Matplotlib. To import the files (when in the chosen directory) go onto the terminal and enter:
+
+```
+git clone git@github.com:acse-2019/acse-4-armageddon-astraea.git
+```
 
 ### User instructions
 
-*to be written*
+In Python, enter the directory containing acse-4-armageddon-astraea and run the code:
+
+```
+import armageddon
+```
+By doing so, functions from the different files can be called. For example, the solve_atmospheric_entry function can be called like this:
+
+```
+x = Planet()
+
+results_dataframe = x.solve_atmospheric_entry(25, 2.0e4, 3000, 1e6, 45) 
+
+```
+In the example, the inputs in the function are the radius, velocity, density, strength, and angle of the asteroid at t=0 (ie. the initial state). results_dataframe is a Pandas dataframe with velocity, mass, angle, altitude, distance, radius, and time as the columns, and the corresponding values found by the solver up until airburst, cratering, or both, occurs.
 
 ### Documentation
 
