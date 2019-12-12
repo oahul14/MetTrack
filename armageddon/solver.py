@@ -205,12 +205,8 @@ class Planet():
 #        assert density > 0, "Density must be a positive value"
 #        assert strength > 0, "Strength must be a positive value"
 #        assert 0 < angle <= 90, "Angle must be in range 0 < angle <= 90"
-#
-        if radians == False: 
-            angle = angle*np.pi/180 # converting to radians if input degrees
-        else:
-            pass
-        
+#  
+        angle = angle*np.pi/180 # converting to 
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
         X = self.RK4(state0,0, 400, 0.01, strength, density)
@@ -262,13 +258,7 @@ class Planet():
             ``velocity``, ``mass``, ``angle``, ``altitude``,
             ``distance``, ``radius``, ``time``
         """
-        
-        # Conversion to radians if needed:
-        if radians == False: 
-            angle = angle*np.pi/180 # converting to radians if input degrees
-        else:
-            pass
-        
+
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
         X = self.RK4(state0,0, 20, 0.01, strength, density)
@@ -387,14 +377,12 @@ class Planet():
         row_maxdedz = result2.loc[result2["dedz"] == dedz_max]
         # peak burst altitude
         burst_alt = row_maxdedz.altitude.iloc[0]
-        print('burst alt:', burst_alt)
         if burst_alt > 5000:
             outcome = self.airburst(result2, row_maxdedz)
         elif (burst_alt >= 0) and (burst_alt <=5000):
             outcome = self.craburst(result2, row_maxdedz)
         elif burst_alt < 0:
             outcome = self.cratering(result2)
-        print('broken2')
         return outcome
 
     def airburst(self, result, row_maxdedz):
@@ -415,7 +403,6 @@ class Planet():
             "burst_altitude": row_maxdedz.altitude.iloc[0],
             "burst_total_ke_lost" : total_loss
         }
-        print('burst altitude:', row_maxdedz.altitude.iloc[0])
         return outcome
 
     def craburst(self, result, row_maxdedz):
@@ -425,8 +412,6 @@ class Planet():
         # find the first row where altitude < 0 
         row_alt = result.loc[result.altitude < 0]
 #        # use the row before it to get data for cratering event
-#        print('broken3')
-#        print(result.altitude)
         row_alt0 = result.loc[result.index == row_alt.index[0]-1]
         
         
@@ -449,7 +434,6 @@ class Planet():
             "impact_speed" :row_alt0.velocity.iloc[0]
         }
         
-        ### Interpolation: ###
 #        #find the first row where altitude < 0 
 #        row_alt = result.loc[result.altitude < 0]
 #        row_lower = result.loc[row_alt.index[0] - 10 <= result.index]
@@ -504,14 +488,13 @@ class Planet():
 
 #        
 #
-#x = Planet()
-#result, outcome = x.impact(10, 20e3, 3000, 10e5, 45)
-#
-#plt.plot(result['altitude'], result['dedz'])
-#plt.grid()
-#print('outcome')
-#print(outcome)
-#plt.show()
+x = Planet()
+result, outcome = x.impact(10, 20e3, 3000, 10e5, 45)
+
+plt.plot(result['altitude'], result['dedz'])
+plt.grid()
+print(outcome)
+plt.show()
 #plt.plot(result['altitude'], result['velocity'])
 #plt.grid()
 #
