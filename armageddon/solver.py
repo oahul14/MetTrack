@@ -202,8 +202,7 @@ class Planet():
 #        assert density > 0, "Density must be a positive value"
 #        assert strength > 0, "Strength must be a positive value"
 #        assert 0 < angle <= 90, "Angle must be in range 0 < angle <= 90"
-#  
-        angle = angle*np.pi/180 # converting to 
+
         result = self.solve_atmospheric_entry(radius, velocity, density, strength, angle,
             init_altitude=init_altitude, dt=dt, radians=radians) 
         result2 = self.calculate_energy(result)
@@ -247,10 +246,11 @@ class Planet():
             ``velocity``, ``mass``, ``angle``, ``altitude``,
             ``distance``, ``radius``, ``time``
         """
-
+        if radians == False:
+            angle = angle*np.pi/180 # converting to
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
-        X = self.RK4(state0,0, 1e10, 0.01, strength, density)
+        X = self.RK4(state0,0, 1e10, dt, strength, density)
         result = np.zeros((len(X[0][:, 0])-1, 7))
         result[:, 0:-1] = X[0][:-1, :]
         result[:, -1] = (X[1][:-1])
@@ -389,9 +389,9 @@ class Planet():
         define a function to calculate the outcome when 0 <=altitude <= 5
         """
         # find the first row where altitude < 0 
-        row_alt = result.loc[result.altitude < 0]
+        row_alt = result.loc[result.altitude > 0]
 #        # use the row before it to get data for cratering event
-        row_alt0 = result.loc[result.index == row_alt.index[0]-1]
+        row_alt0 = result.loc[result.index == row_alt.index[-1]]
         
         
         
@@ -415,7 +415,7 @@ class Planet():
         
 #        #find the first row where altitude < 0 
 #        row_alt = result.loc[result.altitude < 0]
-#        row_lower = result.loc[row_alt.index[0] - 10 <= result.index]
+#        row_lower = result.loc[row_alt.index[0] - 1 <= result.index]
 #        row_upper = result.loc[(result.index <= row_alt.index[0] + 10)]
 #        row_between = pd.merge(row_lower, row_upper, how='inner')
 #        # raw data 
@@ -474,6 +474,93 @@ plt.plot(result['altitude'], result['dedz'])
 plt.grid()
 print(outcome)
 plt.show()
+
+def optimisation(z, radius, strength):
+    """
+        Takes a radius and a strength, and returns the dedz values (calculated by
+        the "impact" function inside the "Planet" class)
+
+        Parameters
+        ----------
+        z: Any
+        Unused (used to satisfy syntax of Scipy's optimiser)
+
+        radius:
+        Asteroid radius to optimise.
+
+        strength:
+        Strength to optimise. 
+ 
+        Returns
+        -------
+        Result : Array
+        Array containing dedz values for a given radius and stength
+        """
+
+    x = Planet()
+    result, out = x.impact(radius, 19200, 3300, strength, 18.3)
+    return   np.array(result["dedz"])
+def map_enlarge(a, new_length):
+    """
+        Map vector of size M into a vector of size N (N>M) using interpolation.
+        Works for unevenly spaced entries of the vector. 
+
+        Parameters
+        ----------
+        a : Array
+            Vector to be redimensioned. 
+        new_length : Integer
+            Length N of the new vector.
+
+        Returns
+        -------
+        Result : Array
+            Redimensioned vector. 
+        """
+
+    old_indices = np.arange(0,len(a))
+    new_indices = np.linspace(0,len(a)-1,new_length)
+    spl = UnivariateSpline(old_indices,a,k=3,s=0)
+    return spl(new_indices)
+def solve_optimisation():
+    """
+        Find the best fit to the Chelyabinsk impact data (y = dedz; x = altitude)
+        Optimises the function "impact" from class "Planet" with respect to the parameters
+        {radius, strength} to fit the observational data. 
+        Plots the observatonal data and the fit.
+        
+        Returns
+        -------
+        Result : List
+            List of length 2 containing the optimal radius and strength
+        """
+
+    fil= pd.read_csv('data/ChelyabinskEnergyAltitude.csv', delimiter = ',')
+    x_data = np.array(fil["Height (km)"]*1e3)
+    y_data = np.array(fil["Energy Per Unit Length (kt Km^-1)"]*1e6)
+    x_data_enlarged = map_enlarge(y_data, 1001)
+
+    popt, pcov = curve_fit(optimisation, x_data, x_data_enlarged)
+    x = Planet()
+    frame, out = x.impact(popt[0], 19200, 3300, popt[1], 18.3) #radius, velocity, density, strength, angle
+    plt.figure()
+    plt.plot(frame["dedz"], map_enlarge(x_data, 1001))
+    plt.plot(y_data, x_data, 'x')
+    return popt
+
+#fil= pd.read_csv('data/ChelyabinskEnergyAltitude.csv', delimiter = ',')
+#x_data = np.array(fil["Height (km)"]*1e3)
+#y_data = np.array(fil["Energy Per Unit Length (kt Km^-1)"]*1e6)
+#plt.figure()
+#plt.plot(y_data, x_data, 'x')
+#plt.figure()
+#for radius in [10, 20, 30]:
+#    for strength in [1e4, 1e5, 1e6]:
+#        result, out = x.impact(radius, 19200, 3300, strength, 18.3)
+#        plt.plot(result["dedz"], result["altitude"])
+   
+#solve_optimisation()
+
 #plt.plot(result['altitude'], result['velocity'])
 #plt.grid()
 #
@@ -503,3 +590,17 @@ plt.show()
 ##3. anal out
 #
 ##should be same as solve impact
+x = Planet()
+result, out= x.impact(1,20e3, 3000, 1e32, 30, init_altitude=100e3, dt=0.05)
+
+plt.plot(result['velocity'], result['altitude'])
+plt.grid()
+print(outcome)
+plt.show()
+
+
+#x = Planet()
+#frame, out = x.impact(1, 1e5, 3000, 1e32, 30, init_altitude=100e3, dt=0.05)
+#print(frame.head())
+#plt.figure()
+#plt.plot(frame["altitude"], frame["velocity"])
