@@ -58,7 +58,7 @@ class Planet():
         self.H = H
         self.rho0 = rho0
         self.flag = 0 #flag variable to select atmosphere
-        self.tabular_df = pd.read_csv('/data/AltitudeDensityTable.csv', \
+        self.tabular_df = pd.read_csv('data/AltitudeDensityTable.csv', \
                     skiprows=6, delimiter=' ', header=None)
 
         if atmos_func == 'exponential':
