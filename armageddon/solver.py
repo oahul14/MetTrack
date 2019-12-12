@@ -68,7 +68,7 @@ class Planet():
         elif atmos_func == 'mars':
             self.flag = 2
         elif atmos_func == 'constant':
-            self.rhoa = lambda x: rho0
+            self.flag = 3
         else:
             raise NotImplementedError
 
@@ -125,6 +125,8 @@ class Planet():
                     T = 242.1-0.000998*u[3]
                 p = 0.699*np.exp(-0.00009*u[3])
                 atmo_den = p/(0.1921*T)
+            elif self.flag == 3:
+                atmo_den = self.rho0
               
 
             if atmo_den*u[0]**2 > Y:
