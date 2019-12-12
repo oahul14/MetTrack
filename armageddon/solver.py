@@ -205,8 +205,12 @@ class Planet():
 #        assert density > 0, "Density must be a positive value"
 #        assert strength > 0, "Strength must be a positive value"
 #        assert 0 < angle <= 90, "Angle must be in range 0 < angle <= 90"
-#           
-        angle = angle*np.pi/180 # converting to 
+#
+        if radians == False: 
+            angle = angle*np.pi/180 # converting to radians if input degrees
+        else:
+            pass
+        
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
         X = self.RK4(state0,0, 400, 0.01, strength, density)
@@ -258,7 +262,13 @@ class Planet():
             ``velocity``, ``mass``, ``angle``, ``altitude``,
             ``distance``, ``radius``, ``time``
         """
-
+        
+        # Conversion to radians if needed:
+        if radians == False: 
+            angle = angle*np.pi/180 # converting to radians if input degrees
+        else:
+            pass
+        
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
         X = self.RK4(state0,0, 20, 0.01, strength, density)
@@ -439,6 +449,7 @@ class Planet():
             "impact_speed" :row_alt0.velocity.iloc[0]
         }
         
+        ### Interpolation: ###
 #        #find the first row where altitude < 0 
 #        row_alt = result.loc[result.altitude < 0]
 #        row_lower = result.loc[row_alt.index[0] - 10 <= result.index]
