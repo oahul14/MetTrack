@@ -211,7 +211,7 @@ class Planet():
             init_altitude=init_altitude, dt=dt, radians=radians) 
         result2 = self.calculate_energy(result)
         result2 = result2.fillna(0)
-        outcome = self.analyse_outcome(result)
+        outcome = self.analyse_outcome(result2)
         return result2, outcome
 
     def solve_atmospheric_entry(
@@ -224,7 +224,6 @@ class Planet():
         radius : float
             The radius of the asteroid in meters
         velocity : float
-            The entery speed of the asteroid in meters/second
         density : float
             The density of the asteroid in kg/m^3
         strength : float
@@ -285,7 +284,7 @@ class Planet():
         de = de.diff()/(4.184*10**9)
         dz = result["altitude"].diff()
         res = de/dz
-        result.insert(len(result.columns),'dedz', res)    
+        result.insert(len(result.columns),'dedz', res)  
         return result
     
     def Lagrange_basis_poly(self, xi, x):
@@ -354,8 +353,8 @@ class Planet():
         # define outcome as a dictionary
         outcome = {}
         # find the maxium dedz and its corresponding burst altitude
-        result2 = self.calculate_energy(result)
-        dedz_max = np.max(result2["dedz"])
+        result2 = result.copy()
+        dedz_max = result2["dedz"].max()
         # the row where maxium dedz is
         row_maxdedz = result2.loc[result2["dedz"] == dedz_max]
         # peak burst altitude
@@ -439,9 +438,6 @@ class Planet():
         row_alt = result.loc[result.altitude > 0]
         # use the row before it to get data for cratering event
         row_alt0 = result.loc[result.index == row_alt.index[-1]]
-        
-        
-        
         # calculate the total energy loss till peak energy loss rate
         # m,v at airburst point and initial condition
         m_burst = result.loc[row_maxdedz.index[0], 'mass']
@@ -458,40 +454,7 @@ class Planet():
             "impact_time" : row_alt0.time.iloc[0],
             "impact_mass" :row_alt0.mass.iloc[0],
             "impact_speed" :row_alt0.velocity.iloc[0]
-        }
-        
-#        #find the first row where altitude < 0 
-#        row_alt = result.loc[result.altitude < 0]
-#        row_lower = result.loc[row_alt.index[0] - 1 <= result.index]
-#        row_upper = result.loc[(result.index <= row_alt.index[0] + 10)]
-#        row_between = pd.merge(row_lower, row_upper, how='inner')
-#        # raw data 
-#        alt_i = np.array(row_between.altitude)
-#        time_i = np.array(row_between.time)
-#        mass_i = np.array(row_between.mass)
-#        speed_i = np.array(row_between.velocity)
-#        impact_time = float(self.Lagrange_interp_poly(alt_i, time_i, [0]))
-#        impact_mass = float(self.Lagrange_interp_poly(alt_i, mass_i, [0]))
-#        impact_speed = float(self.Lagrange_interp_poly(alt_i, speed_i, [0]))
-#        
-#        # calculate the total energy loss till peak energy loss rate
-#        # m,v at airburst point and initial condition
-#        m_burst = result.loc[row_maxdedz.index[0], 'mass']
-#        v_burst = result.loc[row_maxdedz.index[0], 'velocity']
-#        m0 = result.loc[0, 'mass']
-#        v0 = result.loc[0, 'velocity']
-#        total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))/(4.184*10**12)
-#        
-#        outcome = {
-#            "outcome": "Airburst and cratering",
-#            "burst_peak_dedz": row_maxdedz.dedz.iloc[0],
-#            "burst_altitude": row_maxdedz.altitude.iloc[0],
-#            "burst_total_ke_lost" : total_loss,
-#            "impact_time" : impact_time,
-#            "impact_mass" : impact_mass,
-#            "impact_speed" : impact_speed
-#        }
-            
+        }   
         return outcome
 
     def cratering(self, result):
@@ -531,144 +494,8 @@ class Planet():
             "impact_speed" :row_alt0.velocity.iloc[0]
         }
         return outcome
-    
-
-#        
-#
-x = Planet()
-result, outcome = x.impact(10, 20e3, 3000, 10e5, 45)
-
-plt.plot(result['altitude'], result['dedz'])
-plt.grid()
-print(outcome)
-plt.show()
-
-def optimisation(z, radius, strength):
-    """
-        Takes a radius and a strength, and returns the dedz values (calculated by
-        the "impact" function inside the "Planet" class)
-
-        Parameters
-        ----------
-        z: Any
-        Unused (used to satisfy syntax of Scipy's optimiser)
-
-        radius:
-        Asteroid radius to optimise.
-
-        strength:
-        Strength to optimise. 
- 
-        Returns
-        -------
-        Result : Array
-        Array containing dedz values for a given radius and stength
-        """
-
-    x = Planet()
-    result, out = x.impact(radius, 19200, 3300, strength, 18.3)
-    return   np.array(result["dedz"])
-def map_enlarge(a, new_length):
-    """
-        Map vector of size M into a vector of size N (N>M) using interpolation.
-        Works for unevenly spaced entries of the vector. 
-
-        Parameters
-        ----------
-        a : Array
-            Vector to be redimensioned. 
-        new_length : Integer
-            Length N of the new vector.
-
-        Returns
-        -------
-        Result : Array
-            Redimensioned vector. 
-        """
-
-    old_indices = np.arange(0,len(a))
-    new_indices = np.linspace(0,len(a)-1,new_length)
-    spl = UnivariateSpline(old_indices,a,k=3,s=0)
-    return spl(new_indices)
-def solve_optimisation():
-    """
-        Find the best fit to the Chelyabinsk impact data (y = dedz; x = altitude)
-        Optimises the function "impact" from class "Planet" with respect to the parameters
-        {radius, strength} to fit the observational data. 
-        Plots the observatonal data and the fit.
-        
-        Returns
-        -------
-        Result : List
-            List of length 2 containing the optimal radius and strength
-        """
-
-    fil= pd.read_csv('data/ChelyabinskEnergyAltitude.csv', delimiter = ',')
-    x_data = np.array(fil["Height (km)"]*1e3)
-    y_data = np.array(fil["Energy Per Unit Length (kt Km^-1)"]*1e6)
-    x_data_enlarged = map_enlarge(y_data, 1001)
-
-    popt, pcov = curve_fit(optimisation, x_data, x_data_enlarged)
-    x = Planet()
-    frame, out = x.impact(popt[0], 19200, 3300, popt[1], 18.3) #radius, velocity, density, strength, angle
-    plt.figure()
-    plt.plot(frame["dedz"], map_enlarge(x_data, 1001))
-    plt.plot(y_data, x_data, 'x')
-    return popt
-
-#fil= pd.read_csv('data/ChelyabinskEnergyAltitude.csv', delimiter = ',')
-#x_data = np.array(fil["Height (km)"]*1e3)
-#y_data = np.array(fil["Energy Per Unit Length (kt Km^-1)"]*1e6)
-#plt.figure()
-#plt.plot(y_data, x_data, 'x')
-#plt.figure()
-#for radius in [10, 20, 30]:
-#    for strength in [1e4, 1e5, 1e6]:
-#        result, out = x.impact(radius, 19200, 3300, strength, 18.3)
-#        plt.plot(result["dedz"], result["altitude"])
-   
-#solve_optimisation()
-
-#plt.plot(result['altitude'], result['velocity'])
-#plt.grid()
-#
-#plt.show()
-#plt.plot(result['altitude'], result['mass'])
-#plt.grid()
-#
-#plt.show()
-#plt.plot(result['altitude'], result['angle'])
-##plt.ylim([44,46])
-#
-#plt.show()
-#plt.plot(result['altitude'], result['radius'])
-#plt.grid()
-#
-#plt.show()
-#plt.plot(result['altitude'], result['distance'])
-#plt.grid()
-#
-#plt.grid()
-#
-#plt.show()
-#
-#######
-##1. solve atmos
-##2. calc ener
-##3. anal out
-#
-##should be same as solve impact
-x = Planet()
-result, out= x.impact(1,20e3, 3000, 1e32, 30, init_altitude=100e3, dt=0.05)
-
-plt.plot(result['velocity'], result['altitude'])
-plt.grid()
-print(outcome)
-plt.show()
 
 
-#x = Planet()
-#frame, out = x.impact(1, 1e5, 3000, 1e32, 30, init_altitude=100e3, dt=0.05)
-#print(frame.head())
-#plt.figure()
-#plt.plot(frame["altitude"], frame["velocity"])
+# plt.plot(result['velocity'], result['altitude'])
+# plt.grid()
+# plt.show()
