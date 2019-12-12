@@ -58,6 +58,8 @@ class Planet():
         self.H = H
         self.rho0 = rho0
         self.flag = 0 #flag variable to select atmosphere
+        self.tabular_df = pd.read_csv('data/AltitudeDensityTable.csv', \
+                    skiprows=6, delimiter=' ', header=None)
 
         if atmos_func == 'exponential':
             self.flag = 0
@@ -66,7 +68,7 @@ class Planet():
         elif atmos_func == 'mars':
             self.flag = 2
         elif atmos_func == 'constant':
-            self.rhoa = lambda x: rho0
+            self.flag = 3
         else:
             raise NotImplementedError
 
@@ -123,6 +125,8 @@ class Planet():
                     T = 242.1-0.000998*u[3]
                 p = 0.699*np.exp(-0.00009*u[3])
                 atmo_den = p/(0.1921*T)
+            elif self.flag == 3:
+                atmo_den = self.rho0
               
 
             if atmo_den*u[0]**2 > Y:
