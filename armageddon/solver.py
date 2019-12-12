@@ -370,7 +370,27 @@ class Planet():
 
     def airburst(self, result, row_maxdedz):
         """
-        define a function to calculate the outcome when altitude > 5
+        Inspect a prefound solution to calculate the impact and airburst stats
+	    when altitude > 5000 m, i.e. only airburst occurs
+
+        Parameters
+        
+        -------
+        result-DataFrame
+            pandas DataFrame with velocity, mass, angle, altitude, horizontal
+            distance, radius and dedz as a function of time
+        -------
+        row_maxdedz-DataFrame
+            pandas DataFrame with velocity, mass, angle, altitude, horizontal
+            distance, radius and dedz as a function of time when dedz is biggest
+
+        Returns
+        -------
+        outcome-Dict
+            dictionary with details of airburst this will contain the following keys:
+            ``burst_peak_dedz``, ``burst_altitude``, ``burst_total_ke_lost``.
+            it also contain an entry with the key ``outcome``,
+            which should contain the following strings: ``Airburst``
         """
         # calculate the total energy loss till peak energy loss rate
         # m,v at airburst point and initial condition
@@ -390,11 +410,34 @@ class Planet():
 
     def craburst(self, result, row_maxdedz):
         """
-        define a function to calculate the outcome when 0 <=altitude <= 5
+        Inspect a prefound solution to calculate the impact and airburst stats
+	    when 0 m <= altitude <= 5000 m, i.e. both airburst and cratering occur
+
+        Parameters
+        
+        -------
+        result-DataFrame
+            pandas DataFrame with velocity, mass, angle, altitude, horizontal
+            distance, radius and dedz as a function of time
+        -------
+        row_maxdedz-DataFrame
+            pandas DataFrame with velocity, mass, angle, altitude, horizontal
+            distance, radius and dedz as a function of time when dedz is biggest
+
+        Returns
+        -------
+        outcome-Dict
+            dictionary with details of airburst and cratering event.
+            This will contain the following keys:
+            ``burst_peak_dedz``, ``burst_altitude``, ``burst_total_ke_lost``
+            ``impact_time``, ``impact_mass``, ``impact_speed``.
+            IT should also contain an entry with the key ``outcome``,
+            which should contain the following strings: ``Airburst and cratering``
         """
+
         # find the first row where altitude < 0 
         row_alt = result.loc[result.altitude > 0]
-#        # use the row before it to get data for cratering event
+        # use the row before it to get data for cratering event
         row_alt0 = result.loc[result.index == row_alt.index[-1]]
         
         
@@ -453,7 +496,28 @@ class Planet():
 
     def cratering(self, result):
         """
-        define a function to calculate the outcome when altitude < 0
+        Inspect a prefound solution to calculate the impact and airburst stats
+	    when altitude < 0 m, i.e. only cratering occurs
+
+        Parameters
+        
+        -------
+        result-DataFrame
+            pandas DataFrame with velocity, mass, angle, altitude, horizontal
+            distance, radius and dedz as a function of time
+        -------
+        row_maxdedz-DataFrame
+            pandas DataFrame with velocity, mass, angle, altitude, horizontal
+            distance, radius and dedz as a function of time when dedz is biggest
+
+        Returns
+        -------
+        outcome-Dict
+            dictionary with details of airburst and/or cratering event.
+            This will contain the following keys:
+            ``impact_time``, ``impact_mass``, ``impact_speed``.
+            It should also contain an entry with the key ``outcome``,
+            which should contain the following string: ``Cratering``
         """
         # find the first row where altitude < 0 
         row_alt = result.loc[result.altitude < 0]
