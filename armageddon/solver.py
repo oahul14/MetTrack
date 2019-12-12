@@ -110,10 +110,7 @@ class Planet():
         u_all = [u0]
         t_all = [t0]
         #t_max = 0.5
-        while t < t_max:
-            
-
-            
+        while (t < t_max) & (u[3] > 0) & (u[2]>0):
             if self.flag == 0:
                 atmo_den = 1.2*np.exp(-u[3]/8000)
             elif self.flag == 1:
@@ -207,16 +204,8 @@ class Planet():
 #        assert 0 < angle <= 90, "Angle must be in range 0 < angle <= 90"
 #  
         angle = angle*np.pi/180 # converting to 
-        m=density*4/3*np.pi*radius**3
-        state0 = np.array([velocity, m, angle, init_altitude,0, radius])
-        X = self.RK4(state0,0, 400, 0.01, strength, density)
-        #dedz= np.array(1/2*X[0][:, 1]*X[0][:, 0]**2)
-        #dedz = abs(np.diff(dedz))
-        result = np.zeros((len(X[0][:, 0])-1, 7))
-        result[:, 0:-1] = X[0][:-1, :]
-        result[:, -1] = (X[1][:-1])
-        result[:,2] = result[:,2]*(180/np.pi) # converting back to degrees for output
-        result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
+        result = self.solve_atmospheric_entry(radius, velocity, density, strength, angle,
+            init_altitude=init_altitude, dt=dt, radians=radians) 
         result2 = self.calculate_energy(result)
         result2 = result2.fillna(0)
         outcome = self.analyse_outcome(result)
@@ -261,23 +250,13 @@ class Planet():
 
         m=density*4/3*np.pi*radius**3
         state0 = np.array([velocity, m, angle, init_altitude,0, radius])
-        X = self.RK4(state0,0, 20, 0.01, strength, density)
-        #
+        X = self.RK4(state0,0, 1e10, 0.01, strength, density)
         result = np.zeros((len(X[0][:, 0])-1, 7))
         result[:, 0:-1] = X[0][:-1, :]
-        result[:, -1] = X[1][:-1]
-        result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])   
-        #result = self.calculate_energy(result)
-        result = result.fillna(0)
+        result[:, -1] = (X[1][:-1])
+        result[:,2] = result[:,2]*(180/np.pi) # converting back to degrees for output
+        result = pd.DataFrame(result, columns=["velocity", "mass", "angle", "altitude", "distance", "radius", "time"])  
         return result
-        #return pd.DataFrame({'velocity': X[0][-1, 0],
-                             #'mass': X[0][-1, 1],
-                             #'angle': X[0][-1, 2],
-                             #'altitude': init_altitude,
-                             #'distance': X[0][-1, 4],
-                             #'radius': X[0][-1, 5],
-                             #'dedz': X[0][-1, -1],
-                             #'time': 0.0}, index=range(1))
 
     def calculate_energy(self, result):
         """
