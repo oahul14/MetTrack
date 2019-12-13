@@ -1,0 +1,12 @@
+src
+===
+
+.. toctree::
+   :maxdepth: 4
+
+   ensemble
+   optimisation
+   plot_analytical
+   solver
+   test_armageddon
+   user_interface

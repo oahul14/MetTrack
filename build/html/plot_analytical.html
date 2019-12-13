@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>plot_analytical module &mdash; Armageddon 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Armageddon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">plot_analytical module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Armageddon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>plot_analytical module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/plot_analytical.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-plot_analytical">
+<span id="plot-analytical-module"></span><h1>plot_analytical module<a class="headerlink" href="#module-plot_analytical" title="Permalink to this headline">¶</a></h1>
+<p>Created on Mon Dec  9 15:54:48 2019</p>
+<p>&#64;author: Alexander Campbell</p>
+<dl class="function">
+<dt id="plot_analytical.solve_analytical">
+<code class="sig-prename descclassname">plot_analytical.</code><code class="sig-name descname">solve_analytical</code><span class="sig-paren">(</span><em class="sig-param">Cd=1.0</em>, <em class="sig-param">r=10</em>, <em class="sig-param">H=8000</em>, <em class="sig-param">v0=20000.0</em>, <em class="sig-param">theta=45</em>, <em class="sig-param">rho0=3000</em>, <em class="sig-param">dt=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#plot_analytical.solve_analytical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves for the analytical solution of the simplified case. Also solves numerically
+using scipy function solve_ivp.
+———-
+Cd - float, optional</p>
+<blockquote>
+<div><p>The drag coefficient</p>
+</div></blockquote>
+<dl class="simple">
+<dt>r - float, optional</dt><dd><p>the meteor radius (m)</p>
+</dd>
+<dt>H - float, optional</dt><dd><p>Atmospheric scale height (m)</p>
+</dd>
+<dt>v0 - float, optional</dt><dd><p>initial velocity (m/s)</p>
+</dd>
+<dt>Ch - float, optional</dt><dd><p>The heat transfer coefficient</p>
+</dd>
+<dt>theta - float, optional</dt><dd><p>angle (degrees)</p>
+</dd>
+<dt>rho0 - float, optional</dt><dd><p>Air density at zero altitude (kg/m^3)</p>
+</dd>
+<dt>dt - float, optional</dt><dd><p>timestep (s)</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>z - numpy array</dt><dd><p>altitude (m)</p>
+</dd>
+<dt>V - numpy array</dt><dd><p>velocity (m/s)</p>
+</dd>
+<dt>ivp_sol - numpy array</dt><dd><p>contains columns of velocity, altitude and distance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Astraea
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
