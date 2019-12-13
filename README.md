@@ -8,7 +8,12 @@ This tool predicts the fate of asteroids entering Earth’s atmosphere for the p
 
 ### Installation Guide
 
-The tool uses Python and the following Python libraries: Numpy, Scipy, Pandas, Dask, Itertools and Matplotlib. To import the files (when in the chosen directory) go onto the terminal and enter:
+The tool uses Python and the following Python libraries: 
+```
+python -m pip install -r requirements.txt
+```
+
+To import the files (when in the chosen directory) go onto the terminal and enter:
 
 ```
 git clone git@github.com:acse-2019/acse-4-armageddon-astraea.git
