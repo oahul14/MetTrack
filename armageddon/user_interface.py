@@ -1,24 +1,36 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Dec  9 18:43:02 2019
-
 @author: Alexander Campbell
 """
 
 import tkinter as tk
 import matplotlib.pyplot as plt
 # input variables:
-fields = ('Cd', 'Ch', 'Q', 'Cl', 'alpha', 'Rp', 'g', 'H', 'rho0', 'radius', 'velocity', 'density', 'strength', 'angle')
+variables = ('Cd', 'Ch', 'Q', 'Cl', 'alpha', 'Rp', 'g', 'H', 'rho0', 'radius', 'velocity', 'density', 'strength', 'angle')
 
-def makeform(root, fields):
+def makedict(root, variables):
+    """
+    Produces dictionary to be used in making the interface.
+    ----------
+    roots : tkinter root
+    variables : list
+        contains specified user variables.
+
+    Returns
+    -------
+    entries : dictionary
+        dictionary of specified input variables for use in functions below.
+ 
+    """
     init_vals = ("1.0", "0.1", "1e7", "1e-3", "0.3", "6371e3", "9.81", "8000", "1.2", "10", "20e3", "3e3", "3e3", "45")
     entries = {}
-    for i, field in enumerate(fields,1):
+    for i, field in enumerate(variables,1):
         row = tk.Frame(root)
-        lab = tk.Label(row, width=15, text=field+": ", anchor='w')
+        lab = tk.Label(row, width=10, text=field+": ", anchor='w')
         ent = tk.Entry(row)
         ent.insert(0, init_vals[i-1])
-        row.pack(side=tk.TOP, fill=tk.X, padx=5, pady=5)
+        row.pack(side=tk.TOP, fill=tk.X, padx=2, pady=8)
         lab.pack(side=tk.LEFT)
         ent.pack(side=tk.RIGHT, expand=tk.YES, fill=tk.X)
         entries[field] = ent
@@ -36,7 +48,7 @@ def ode_solve(entries):
     g = float(entries['g'].get())
     H = float(entries['H'].get())
     rho0 = float(entries['rho0'].get())
-    
+
     radius = float(entries['radius'].get())
     velocity = float(entries['velocity'].get())
     density = float(entries['density'].get())
@@ -47,9 +59,9 @@ def ode_solve(entries):
     import solver as sv
     x = sv.Planet(Cd=Cd, Ch=Ch, Q=Q, Cl=Cl, alpha=alpha, Rp=Rp, rho0=rho0, g=g, H=H)
     result, outcome = x.impact(radius, velocity, density, strength, angle)
-    
+
     # calculate analytical solution:
-    
+
     # print results to terminal:
     print('result')
     #print(result)
@@ -57,7 +69,7 @@ def ode_solve(entries):
     print('  ')
     print('outcome')
     print(outcome)
-    
+
     plt.figure()
     plt.plot(result["dedz"], result["altitude"])
     #plt.plot((0,3.7e13),(27949, 27949))
@@ -68,7 +80,7 @@ def ode_solve(entries):
 def plot_an(entries):
     import plot_analytical as pa
     import solver as sv
-    
+
     # input values for solver:
     Cd = float(entries['Cd'].get())
     Ch = float(entries['Ch'].get())
@@ -84,7 +96,7 @@ def plot_an(entries):
     density = float(entries['density'].get())
     strength = float(entries['strength'].get())
     angle = float(entries['angle'].get())
-    
+
     # simplifying assumptions required for comparison:
     Cd=1
     H=8000
@@ -93,7 +105,7 @@ def plot_an(entries):
     Cl=0
     Ch=0.1
     Rp=1e10
-    
+
     x = sv.Planet(Cd=Cd, Ch=Ch, Q=Q, Cl=Cl, alpha=alpha, Rp=Rp, rho0=rho0, g=g, H=H)
     result, outcome = x.impact(radius, velocity, density, strength, angle)
     z, V, ivp_sol = pa.solve_analytical()
@@ -108,17 +120,17 @@ def plot_an(entries):
     plt.ylabel('velocity (m^2/s')
     plt.legend(['Analytical','ivp solve', 'Our solver'])
     plt.show()   
-    
+
 
 if __name__ == '__main__':
     root = tk.Tk()
     root.title('Asteroid Numerical Solver GUI')
-    ents = makeform(root, fields)
-    b1 = tk.Button(root, text='Analytical vs numerical',
-           command=(lambda e=ents: plot_an(e)))
-    b1.pack(side=tk.LEFT, padx=5, pady=5)
-    b2 = tk.Button(root, text='ODE solver',
-           command=(lambda e=ents: ode_solve(e)))
-    b2.pack(side=tk.LEFT, padx=5, pady=5)
+    entries = makedict(root, variables)
+    button1 = tk.Button(root, text='Analytical vs numerical',
+           command=(lambda i=entries: plot_an(i)))
+    button1.pack(side=tk.LEFT, padx=8, pady=8)
+    button2 = tk.Button(root, text='ODE solver',
+           command=(lambda i=entries: ode_solve(i)))
+    button2.pack(side=tk.LEFT, padx=8, pady=8)
 
     root.mainloop()
