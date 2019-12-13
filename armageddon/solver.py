@@ -214,6 +214,15 @@ class Planet():
         outcome = self.analyse_outcome(result2)
         return result2, outcome
 
+    def get_only_outcome(self, radius, velocity, density, strength, angle,
+                         init_altitude=100e3, dt=0.05, radians=False):
+        result = self.solve_atmospheric_entry(radius, velocity, density, strength, angle,
+            init_altitude=init_altitude, dt=dt, radians=radians)
+        result2 = self.calculate_energy(result)
+        result2 = result2.fillna(0)
+        outcome = self.analyse_outcome(result2)
+        return outcome
+
     def solve_atmospheric_entry(
             self, radius, velocity, density, strength, angle,
             init_altitude=100e3, dt=0.05, radians=False):
@@ -327,9 +336,6 @@ class Planet():
             L = L + yi[i] * l[i]
         return L
 
-
-
-
     def analyse_outcome(self, result):
         """
         Inspect a prefound solution to calculate the impact and airburst stats
@@ -358,7 +364,7 @@ class Planet():
         # the row where maxium dedz is
         row_maxdedz = result2.loc[result2["dedz"] == dedz_max]
         # peak burst altitude
-        burst_alt = row_maxdedz.altitude.iloc[0]
+        burst_alt = row_maxdedz.altitude.values
         if burst_alt > 5000:
             outcome = self.airburst(result2, row_maxdedz)
         elif (burst_alt >= 0) and (burst_alt <=5000):
@@ -494,8 +500,3 @@ class Planet():
             "impact_speed" :row_alt0.velocity.iloc[0]
         }
         return outcome
-
-
-# plt.plot(result['velocity'], result['altitude'])
-# plt.grid()
-# plt.show()
