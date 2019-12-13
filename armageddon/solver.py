@@ -14,6 +14,7 @@ class Planet():
                  g=9.81, H=8000., rho0=1.2):
         """
         Set up the initial parameters and constants for the target planet
+
         Parameters
         ----------
         atmos_func : string, optional
@@ -41,6 +42,7 @@ class Planet():
             Surface gravity (m/s^2)
         H : float, optional
             Atmospheric scale height (m)
+
         Returns
         -------
         None
@@ -159,6 +161,7 @@ class Planet():
         Solve the system of differential equations for a given impact event.
         Also calculates the kinetic energy lost per unit altitude and
         analyses the result to determine the outcome of the impact.
+
         Parameters
         ----------
         radius : float
@@ -182,6 +185,7 @@ class Planet():
             Whether angles should be given in degrees or radians. Default=False
             Angles returned in the DataFrame will have the same units as the
             input
+
         Returns
         -------
         Result : DataFrame
@@ -228,6 +232,7 @@ class Planet():
             init_altitude=100e3, dt=0.05, radians=False):
         """
         Solve the system of differential equations for a given impact scenario
+
         Parameters
         ----------
         radius : float
@@ -250,6 +255,7 @@ class Planet():
             Whether angles should be given in degrees or radians. Default=False
             Angles returned in the DataFrame will have the same units as the
             input
+
         Returns
         -------
         Result : DataFrame
@@ -274,11 +280,13 @@ class Planet():
         """
         Function to calculate the kinetic energy lost per unit altitude in
         kilotons TNT per km, for a given solution.
+
         Parameters
         ----------
         result : DataFrame
             A pandas DataFrame with columns for the velocity, mass, angle,
             altitude, horizontal distance and radius as a function of time
+
         Returns
         -------
         Result : DataFrame
@@ -296,14 +304,17 @@ class Planet():
         result.insert(len(result.columns),'dedz', res)  
         return result
 
+
     def analyse_outcome(self, result):
         """
         Inspect a prefound solution to calculate the impact and airburst stats
+
         Parameters
         ----------
         result : DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
             distance, radius and dedz as a function of time
+
         Returns
         -------
         outcome : Dict
@@ -349,7 +360,7 @@ class Planet():
         result-DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
             distance, radius and dedz as a function of time
-        -------
+
         row_maxdedz-DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
             distance, radius and dedz as a function of time when dedz is biggest
@@ -389,7 +400,7 @@ class Planet():
         result-DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
             distance, radius and dedz as a function of time
-        -------
+
         row_maxdedz-DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
             distance, radius and dedz as a function of time when dedz is biggest
@@ -436,7 +447,6 @@ class Planet():
 	    when altitude < 0 m, i.e. only cratering occurs
 
         Parameters
-        
         -------
         result-DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
