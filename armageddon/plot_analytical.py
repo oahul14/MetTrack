@@ -11,6 +11,36 @@ import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
 def solve_analytical(Cd=1.0, r=10, H=8000, v0=20e3, theta=45, rho0=3000, dt=0.1):
+    """
+    Solves for the analytical solution of the simplified case. Also solves numerically
+    using scipy function solve_ivp.
+    ----------
+    Cd : float, optional
+        The drag coefficient
+    r : float, optional
+        the meteor radius (m)
+    H : float, optional
+        Atmospheric scale height (m)
+    v0 : float, optional
+        initial velocity (m/s)
+    Ch : float, optional
+        The heat transfer coefficient
+    theta : float, optional
+            angle (degrees)
+    rho0 : float, optional
+        Air density at zero altitude (kg/m^3)
+    dt : float, optional
+        timestep (s)
+
+    Returns
+    -------
+    z : numpy array
+        altitude (m)
+    V : numpy array
+       velocity (m/s)
+    ivp_sol : numpy array
+        contains columns of velocity, altitude and distance. 
+    """
     ## input variables ##
     #H = 8000 # atmospheric scale height
     #Cd = 1 # drag coefficient
@@ -51,13 +81,3 @@ def solve_analytical(Cd=1.0, r=10, H=8000, v0=20e3, theta=45, rho0=3000, dt=0.1)
     
     return z, V, ivp_sol
 
-## plotting ##
-#def plotting(z, V, v0, ivp_sol):
-#plt.plot(z,V,'b') # analytical
-#plt.xlim([0,100000])
-#plt.ylim([18000,v0])
-#plt.title('analytical vs numerical solution')
-#plt.xlabel('z (m)')
-#plt.ylabel('velocity (m^2/s')
-#plt.plot(ivp_sol.y[1,:], ivp_sol.y[0,:],'r.') # numerical
-#plt.legend(['Analytical','Numerical'])
