@@ -1,0 +1,7 @@
+test\_armageddon module
+=======================
+
+.. automodule:: test_armageddon
+   :members:
+   :undoc-members:
+   :show-inheritance:

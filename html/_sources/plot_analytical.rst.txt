@@ -1,0 +1,7 @@
+plot\_analytical module
+=======================
+
+.. automodule:: plot_analytical
+   :members:
+   :undoc-members:
+   :show-inheritance:

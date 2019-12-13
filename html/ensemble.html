@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ensemble module &mdash; Armageddon 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Armageddon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">ensemble module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Armageddon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>ensemble module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/ensemble.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-ensemble">
+<span id="ensemble-module"></span><h1>ensemble module<a class="headerlink" href="#module-ensemble" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="ensemble.Dist">
+<em class="property">class </em><code class="sig-prename descclassname">ensemble.</code><code class="sig-name descname">Dist</code><span class="sig-paren">(</span><em class="sig-param">prob_vals</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The class called Dist is initialised with the uniform random 
+probability distribution</p>
+<dl class="method">
+<dt id="ensemble.Dist.density_dist">
+<code class="sig-name descname">density_dist</code><span class="sig-paren">(</span><em class="sig-param">rho</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist.density_dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ensemble.Dist.inverse_angle_distribution">
+<code class="sig-name descname">inverse_angle_distribution</code><span class="sig-paren">(</span><em class="sig-param">amin=0</em>, <em class="sig-param">amax=1.5707963267948966</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist.inverse_angle_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ensemble.Dist.inverse_density_distribution">
+<code class="sig-name descname">inverse_density_distribution</code><span class="sig-paren">(</span><em class="sig-param">rho_guess=3000</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist.inverse_density_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ensemble.Dist.inverse_radius_distribution">
+<code class="sig-name descname">inverse_radius_distribution</code><span class="sig-paren">(</span><em class="sig-param">rmin</em>, <em class="sig-param">rmax</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist.inverse_radius_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ensemble.Dist.inverse_strength_distribution">
+<code class="sig-name descname">inverse_strength_distribution</code><span class="sig-paren">(</span><em class="sig-param">ymin=1000.0</em>, <em class="sig-param">ymax=10000000.0</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist.inverse_strength_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ensemble.Dist.inverse_velocity_distribution">
+<code class="sig-name descname">inverse_velocity_distribution</code><span class="sig-paren">(</span><em class="sig-param">v_guess=19.5</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist.inverse_velocity_distribution" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="ensemble.Dist.prob_val">
+<code class="sig-name descname">prob_val</code><em class="property"> = 0.1</em><a class="headerlink" href="#ensemble.Dist.prob_val" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="ensemble.Dist.velocity_dist">
+<code class="sig-name descname">velocity_dist</code><span class="sig-paren">(</span><em class="sig-param">v</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.Dist.velocity_dist" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="ensemble.solve_ensemble">
+<code class="sig-prename descclassname">ensemble.</code><code class="sig-name descname">solve_ensemble</code><span class="sig-paren">(</span><em class="sig-param">planet</em>, <em class="sig-param">fiducial_impact</em>, <em class="sig-param">variables</em>, <em class="sig-param">radians=False</em>, <em class="sig-param">rmin=8</em>, <em class="sig-param">rmax=12</em><span class="sig-paren">)</span><a class="headerlink" href="#ensemble.solve_ensemble" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run asteroid simulation for a distribution of initial conditions and
+find the burst distribution</p>
+<dl class="simple">
+<dt>planet<span class="classifier">object</span></dt><dd><p>The Planet class instance on which to perform the ensemble calculation</p>
+</dd>
+<dt>fiducial_impact<span class="classifier">dict</span></dt><dd><p>Dictionary of the fiducial values of radius, angle, strength, velocity
+and density</p>
+</dd>
+<dt>variables<span class="classifier">list</span></dt><dd><p>List of strings of all impact parameters to be varied in the ensemble
+calculation</p>
+</dd>
+<dt>rmin<span class="classifier">float, optional</span></dt><dd><p>Minimum radius, in m, to use in the ensemble calculation,
+if radius is one of the parameters to be varied.</p>
+</dd>
+<dt>rmax<span class="classifier">float, optional</span></dt><dd><p>Maximum radius, in m, to use in the ensemble calculation,
+if radius is one of the parameters to be varied.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>ensemble<span class="classifier">DataFrame</span></dt><dd><p>DataFrame with columns of any parameters that are varied and the
+airburst altitude</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Astraea
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

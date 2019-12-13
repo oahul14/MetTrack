@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>solver module &mdash; Armageddon 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Armageddon
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">solver module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Armageddon</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>solver module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/solver.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-solver">
+<span id="solver-module"></span><h1>solver module<a class="headerlink" href="#module-solver" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="solver.Planet">
+<em class="property">class </em><code class="sig-prename descclassname">solver.</code><code class="sig-name descname">Planet</code><span class="sig-paren">(</span><em class="sig-param">atmos_func='exponential'</em>, <em class="sig-param">atmos_filename=None</em>, <em class="sig-param">Cd=1.0</em>, <em class="sig-param">Ch=0.1</em>, <em class="sig-param">Q=10000000.0</em>, <em class="sig-param">Cl=0.001</em>, <em class="sig-param">alpha=0.3</em>, <em class="sig-param">Rp=6371000.0</em>, <em class="sig-param">g=9.81</em>, <em class="sig-param">H=8000.0</em>, <em class="sig-param">rho0=1.2</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The class called Planet is initialised with constants appropriate
+for the given target planet, including the atmospheric density profile
+and other constants</p>
+<dl class="method">
+<dt id="solver.Planet.Lagrange_basis_poly">
+<code class="sig-name descname">Lagrange_basis_poly</code><span class="sig-paren">(</span><em class="sig-param">xi</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.Lagrange_basis_poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Lagrange basis polynomials.</p>
+<dl class="simple">
+<dt>xi </dt><dd><p>the x-component of the data</p>
+</dd>
+<dt>x</dt><dd><p>the array of x-locations we want the polynomials evaluated at</p>
+</dd>
+<dt>Returns l</dt><dd><p>the Lagrange polynomials evaluated at x,
+so l is an array of size (len(xi), len(x))</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.Lagrange_interp_poly">
+<code class="sig-name descname">Lagrange_interp_poly</code><span class="sig-paren">(</span><em class="sig-param">xi</em>, <em class="sig-param">yi</em>, <em class="sig-param">x</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.Lagrange_interp_poly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates Lagrange interpolation polynomial from N+1 data points.</p>
+<dl class="simple">
+<dt>(xi, yi)</dt><dd><p>the N+1 data points (0, 1, …, N)</p>
+</dd>
+<dt>x</dt><dd><p>an array of x-locations the polynomial is evaluated at</p>
+</dd>
+<dt>Returns L</dt><dd><p>the Lagrange interpolation polynomial evaluated at x</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.RK4">
+<code class="sig-name descname">RK4</code><span class="sig-paren">(</span><em class="sig-param">u0</em>, <em class="sig-param">t0</em>, <em class="sig-param">t_max</em>, <em class="sig-param">dt</em>, <em class="sig-param">Y</em>, <em class="sig-param">density</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.RK4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.airburst">
+<code class="sig-name descname">airburst</code><span class="sig-paren">(</span><em class="sig-param">result</em>, <em class="sig-param">row_maxdedz</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.airburst" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Inspect a prefound solution to calculate the impact and airburst stats</dt><dd><p>when altitude &gt; 5000 m, i.e. only airburst occurs</p>
+</dd>
+</dl>
+<p>Parameters</p>
+<dl class="simple">
+<dt>result-DataFrame</dt><dd><p>pandas DataFrame with velocity, mass, angle, altitude, horizontal
+distance, radius and dedz as a function of time</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>row_maxdedz-DataFrame</dt><dd><p>pandas DataFrame with velocity, mass, angle, altitude, horizontal
+distance, radius and dedz as a function of time when dedz is biggest</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>outcome-Dict</dt><dd><p>dictionary with details of airburst this will contain the following keys:
+<code class="docutils literal notranslate"><span class="pre">burst_peak_dedz</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_altitude</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_total_ke_lost</span></code>.
+it also contain an entry with the key <code class="docutils literal notranslate"><span class="pre">outcome</span></code>,
+which should contain the following strings: <code class="docutils literal notranslate"><span class="pre">Airburst</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.analyse_outcome">
+<code class="sig-name descname">analyse_outcome</code><span class="sig-paren">(</span><em class="sig-param">result</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.analyse_outcome" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inspect a prefound solution to calculate the impact and airburst stats</p>
+<dl class="simple">
+<dt>result - DataFrame</dt><dd><p>pandas DataFrame with velocity, mass, angle, altitude, horizontal
+distance, radius and dedz as a function of time</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>outcome - Dict</dt><dd><p>dictionary with details of airburst and/or cratering event.
+For an airburst, this will contain the following keys:
+<code class="docutils literal notranslate"><span class="pre">burst_peak_dedz</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_altitude</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_total_ke_lost</span></code>.
+For a cratering event, this will contain the following keys:
+<code class="docutils literal notranslate"><span class="pre">impact_time</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_speed</span></code>.
+All events should also contain an entry with the key <code class="docutils literal notranslate"><span class="pre">outcome</span></code>,
+which should contain one of the following strings:
+<code class="docutils literal notranslate"><span class="pre">Airburst</span></code>, <code class="docutils literal notranslate"><span class="pre">Cratering</span></code> or <code class="docutils literal notranslate"><span class="pre">Airburst</span> <span class="pre">and</span> <span class="pre">cratering</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.calculate_energy">
+<code class="sig-name descname">calculate_energy</code><span class="sig-paren">(</span><em class="sig-param">result</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.calculate_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to calculate the kinetic energy lost per unit altitude in
+kilotons TNT per km, for a given solution.</p>
+<dl class="simple">
+<dt>result - DataFrame</dt><dd><p>A pandas DataFrame with columns for the velocity, mass, angle,
+altitude, horizontal distance and radius as a function of time</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Result - DataFrame</dt><dd><p>Returns the DataFrame with additional column <code class="docutils literal notranslate"><span class="pre">dedz</span></code> which is the
+kinetic energy lost per unit altitude</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.craburst">
+<code class="sig-name descname">craburst</code><span class="sig-paren">(</span><em class="sig-param">result</em>, <em class="sig-param">row_maxdedz</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.craburst" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Inspect a prefound solution to calculate the impact and airburst stats</dt><dd><p>when 0 m &lt;= altitude &lt;= 5000 m, i.e. both airburst and cratering occur</p>
+</dd>
+</dl>
+<p>Parameters</p>
+<dl class="simple">
+<dt>result-DataFrame</dt><dd><p>pandas DataFrame with velocity, mass, angle, altitude, horizontal
+distance, radius and dedz as a function of time</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>row_maxdedz-DataFrame</dt><dd><p>pandas DataFrame with velocity, mass, angle, altitude, horizontal
+distance, radius and dedz as a function of time when dedz is biggest</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>outcome-Dict</dt><dd><p>dictionary with details of airburst and cratering event.
+This will contain the following keys:
+<code class="docutils literal notranslate"><span class="pre">burst_peak_dedz</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_altitude</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_total_ke_lost</span></code>
+<code class="docutils literal notranslate"><span class="pre">impact_time</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_speed</span></code>.
+IT should also contain an entry with the key <code class="docutils literal notranslate"><span class="pre">outcome</span></code>,
+which should contain the following strings: <code class="docutils literal notranslate"><span class="pre">Airburst</span> <span class="pre">and</span> <span class="pre">cratering</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.cratering">
+<code class="sig-name descname">cratering</code><span class="sig-paren">(</span><em class="sig-param">result</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.cratering" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Inspect a prefound solution to calculate the impact and airburst stats</dt><dd><p>when altitude &lt; 0 m, i.e. only cratering occurs</p>
+</dd>
+</dl>
+<p>Parameters</p>
+<dl class="simple">
+<dt>result-DataFrame</dt><dd><p>pandas DataFrame with velocity, mass, angle, altitude, horizontal
+distance, radius and dedz as a function of time</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>row_maxdedz-DataFrame</dt><dd><p>pandas DataFrame with velocity, mass, angle, altitude, horizontal
+distance, radius and dedz as a function of time when dedz is biggest</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>outcome-Dict</dt><dd><p>dictionary with details of airburst and/or cratering event.
+This will contain the following keys:
+<code class="docutils literal notranslate"><span class="pre">impact_time</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_speed</span></code>.
+It should also contain an entry with the key <code class="docutils literal notranslate"><span class="pre">outcome</span></code>,
+which should contain the following string: <code class="docutils literal notranslate"><span class="pre">Cratering</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.f">
+<code class="sig-name descname">f</code><span class="sig-paren">(</span><em class="sig-param">t</em>, <em class="sig-param">state</em>, <em class="sig-param">atmo_den</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coupled ODEs when ram pressure is 
+below strength (no changes in radius)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.f2">
+<code class="sig-name descname">f2</code><span class="sig-paren">(</span><em class="sig-param">t</em>, <em class="sig-param">state</em>, <em class="sig-param">density</em>, <em class="sig-param">atmo_den</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.f2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coupled ODEs when ram pressure is 
+above strength (changes in radius and in area)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.get_only_outcome">
+<code class="sig-name descname">get_only_outcome</code><span class="sig-paren">(</span><em class="sig-param">radius</em>, <em class="sig-param">velocity</em>, <em class="sig-param">density</em>, <em class="sig-param">strength</em>, <em class="sig-param">angle</em>, <em class="sig-param">init_altitude=100000.0</em>, <em class="sig-param">dt=0.05</em>, <em class="sig-param">radians=False</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.get_only_outcome" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.impact">
+<code class="sig-name descname">impact</code><span class="sig-paren">(</span><em class="sig-param">radius</em>, <em class="sig-param">velocity</em>, <em class="sig-param">density</em>, <em class="sig-param">strength</em>, <em class="sig-param">angle</em>, <em class="sig-param">init_altitude=100000.0</em>, <em class="sig-param">dt=0.05</em>, <em class="sig-param">radians=False</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.impact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the system of differential equations for a given impact event.
+Also calculates the kinetic energy lost per unit altitude and
+analyses the result to determine the outcome of the impact.</p>
+<dl class="simple">
+<dt>radius - float</dt><dd><p>The radius of the asteroid in meters</p>
+</dd>
+<dt>velocity - float</dt><dd><p>The entery speed of the asteroid in meters/second</p>
+</dd>
+<dt>density - float</dt><dd><p>The density of the asteroid in kg/m^3</p>
+</dd>
+<dt>strength - float</dt><dd><p>The strength of the asteroid (i.e., the ram pressure above which
+fragmentation and spreading occurs) in N/m^2 (Pa)</p>
+</dd>
+<dt>angle - float</dt><dd><p>The initial trajectory angle of the asteroid to the horizontal
+By default, input is in degrees. If ‘radians’ is set to True, the
+input should be in radians</p>
+</dd>
+<dt>init_altitude - float, optional</dt><dd><p>Initial altitude in m</p>
+</dd>
+<dt>dt - float, optional</dt><dd><p>The output timestep, in s</p>
+</dd>
+<dt>radians - logical, optional</dt><dd><p>Whether angles should be given in degrees or radians. Default=False
+Angles returned in the DataFrame will have the same units as the
+input</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Result - DataFrame</dt><dd><p>A pandas DataFrame containing the solution to the system.
+Includes the following columns:
+<code class="docutils literal notranslate"><span class="pre">velocity</span></code>, <code class="docutils literal notranslate"><span class="pre">mass</span></code>, <code class="docutils literal notranslate"><span class="pre">angle</span></code>, <code class="docutils literal notranslate"><span class="pre">altitude</span></code>,
+<code class="docutils literal notranslate"><span class="pre">distance</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span></code>, <code class="docutils literal notranslate"><span class="pre">dedz</span></code></p>
+</dd>
+<dt>outcome - Dict</dt><dd><p>dictionary with details of airburst and/or cratering event.
+For an airburst, this will contain the following keys:
+<code class="docutils literal notranslate"><span class="pre">burst_peak_dedz</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_altitude</span></code>, <code class="docutils literal notranslate"><span class="pre">burst_total_ke_lost</span></code>.
+For a cratering event, this will contain the following keys:
+<code class="docutils literal notranslate"><span class="pre">impact_time</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_mass</span></code>, <code class="docutils literal notranslate"><span class="pre">impact_speed</span></code>.
+All events should also contain an entry with the key <code class="docutils literal notranslate"><span class="pre">outcome</span></code>,
+which should contain one of the following strings:
+<code class="docutils literal notranslate"><span class="pre">Airburst</span></code>, <code class="docutils literal notranslate"><span class="pre">Cratering</span></code> or <code class="docutils literal notranslate"><span class="pre">Airburst</span> <span class="pre">and</span> <span class="pre">cratering</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="solver.Planet.solve_atmospheric_entry">
+<code class="sig-name descname">solve_atmospheric_entry</code><span class="sig-paren">(</span><em class="sig-param">radius</em>, <em class="sig-param">velocity</em>, <em class="sig-param">density</em>, <em class="sig-param">strength</em>, <em class="sig-param">angle</em>, <em class="sig-param">init_altitude=100000.0</em>, <em class="sig-param">dt=0.05</em>, <em class="sig-param">radians=False</em><span class="sig-paren">)</span><a class="headerlink" href="#solver.Planet.solve_atmospheric_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solve the system of differential equations for a given impact scenario</p>
+<dl class="simple">
+<dt>radius - float</dt><dd><p>The radius of the asteroid in meters</p>
+</dd>
+</dl>
+<p>velocity - float
+density - float</p>
+<blockquote>
+<div><p>The density of the asteroid in kg/m^3</p>
+</div></blockquote>
+<dl class="simple">
+<dt>strength - float</dt><dd><p>The strength of the asteroid (i.e., the ram pressure above which
+fragmentation and spreading occurs) in N/m^2 (Pa)</p>
+</dd>
+<dt>angle - float</dt><dd><p>The initial trajectory angle of the asteroid to the horizontal
+By default, input is in degrees. If ‘radians’ is set to True, the
+input should be in radians</p>
+</dd>
+<dt>init_altitude - float, optional</dt><dd><p>Initial altitude in m</p>
+</dd>
+<dt>dt - float, optional</dt><dd><p>The output timestep, in s</p>
+</dd>
+<dt>radians - logical, optional</dt><dd><p>Whether angles should be given in degrees or radians. Default=False
+Angles returned in the DataFrame will have the same units as the
+input</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Result - DataFrame</dt><dd><p>A pandas DataFrame containing the solution to the system.
+Includes the following columns:
+<code class="docutils literal notranslate"><span class="pre">velocity</span></code>, <code class="docutils literal notranslate"><span class="pre">mass</span></code>, <code class="docutils literal notranslate"><span class="pre">angle</span></code>, <code class="docutils literal notranslate"><span class="pre">altitude</span></code>,
+<code class="docutils literal notranslate"><span class="pre">distance</span></code>, <code class="docutils literal notranslate"><span class="pre">radius</span></code>, <code class="docutils literal notranslate"><span class="pre">time</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Astraea
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
