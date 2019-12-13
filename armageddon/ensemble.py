@@ -90,7 +90,7 @@ def solve_ensemble(
         fiducial_impact['angle'] = fiducial_impact['angle'] * 180/np.pi
 
     #Number of samples
-    N = 100
+    N = 500
     prob_distribution = np.random.uniform(0.0,1.0,N)
 
     distribution = Dist(prob_distribution)

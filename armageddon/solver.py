@@ -114,7 +114,7 @@ class Planet():
         u_all = [u0]
         t_all = [t0]
         #t_max = 0.5
-        while (t < t_max) & (u[3] > 0) & (u[2]>0):
+        while (t < t_max) & (u[3] > 0) & (u[1] > 0):
             if self.flag == 0:
                 atmo_den = 1.2*np.exp(-u[3]/8000)
             elif self.flag == 1:
@@ -303,8 +303,7 @@ class Planet():
         res = de/dz
         result.insert(len(result.columns),'dedz', res)  
         return result
-    
-   
+
 
     def analyse_outcome(self, result):
         """
@@ -333,15 +332,20 @@ class Planet():
         # find the maxium dedz and its corresponding burst altitude
         result2 = result.copy()
         dedz_max = result2["dedz"].max()
+        # print(dedz_max)
+        # print(dedz_max)
         # the row where maxium dedz is
         row_maxdedz = result2.loc[result2["dedz"] == dedz_max]
         # peak burst altitude
-        burst_alt = row_maxdedz.altitude.values
+        burst_alt = row_maxdedz['altitude'].values
+        # print(result2.loc[result2.index[-1], 'dedz'])
+
+
         if burst_alt > 5000:
             outcome = self.airburst(result2, row_maxdedz)
-        elif (burst_alt >= 0) and (burst_alt <=5000):
+        elif result2.loc[result2.index[-1], 'dedz'] != dedz_max:
             outcome = self.craburst(result2, row_maxdedz)
-        elif burst_alt < 0:
+        elif result2.loc[result2.index[-1], 'dedz'] == dedz_max:
             outcome = self.cratering(result2)
         return outcome
 
@@ -351,7 +355,7 @@ class Planet():
 	    when altitude > 5000 m, i.e. only airburst occurs
 
         Parameters
-        
+
         -------
         result-DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
@@ -391,6 +395,7 @@ class Planet():
 	    when 0 m <= altitude <= 5000 m, i.e. both airburst and cratering occur
 
         Parameters
+
         -------
         result-DataFrame
             pandas DataFrame with velocity, mass, angle, altitude, horizontal
@@ -411,26 +416,28 @@ class Planet():
             which should contain the following strings: ``Airburst and cratering``
         """
 
-        # find the first row where altitude < 0 
-        row_alt = result.loc[result.altitude > 0]
+        # find the first row where altitude < 0
+        # row_alt = result.loc[result.altitude > 0]
+        # print(row_alt)
         # use the row before it to get data for cratering event
-        row_alt0 = result.loc[result.index == row_alt.index[-1]]
+        row_alt0 = result.loc[result.index[-1]]
+
         # calculate the total energy loss till peak energy loss rate
         # m,v at airburst point and initial condition
-        m_burst = result.loc[row_maxdedz.index[0], 'mass']
-        v_burst = result.loc[row_maxdedz.index[0], 'velocity']
+        m_burst = row_maxdedz.mass
+        v_burst = row_maxdedz.velocity
         m0 = result.loc[0, 'mass']
         v0 = result.loc[0, 'velocity']
         total_loss = np.abs(0.5*(m_burst*v_burst**2-m0*v0**2))/(4.184*10**12)
-        
+
         outcome = {
             "outcome": "Airburst and cratering",
-            "burst_peak_dedz": row_maxdedz.dedz.iloc[0],
-            "burst_altitude": row_maxdedz.altitude.iloc[0],
+            "burst_peak_dedz": row_maxdedz.dedz,
+            "burst_altitude": row_maxdedz.altitude,
             "burst_total_ke_lost" : total_loss,
-            "impact_time" : row_alt0.time.iloc[0],
-            "impact_mass" :row_alt0.mass.iloc[0],
-            "impact_speed" :row_alt0.velocity.iloc[0]
+            "impact_time" : row_alt0.time,
+            "impact_mass" :row_alt0.mass,
+            "impact_speed" :row_alt0.velocity
         }   
         return outcome
 
@@ -459,14 +466,25 @@ class Planet():
             which should contain the following string: ``Cratering``
         """
         # find the first row where altitude < 0 
-        row_alt = result.loc[result.altitude < 0]
+        # row_alt = result.loc[result.altitude < 0]
         # use the row before it to get data for cratering event
-        row_alt0 = result.loc[result.index == row_alt.index[0]-1]
-        
+        print(result)
+        row_alt0 = result.loc[result.index[-1]]
+        print(row_alt0)
         outcome = {
             "outcome": "Cratering",
-            "impact_time" : row_alt0.time.iloc[0],
-            "impact_mass" :row_alt0.mass.iloc[0],
-            "impact_speed" :row_alt0.velocity.iloc[0]
+            "impact_time" : row_alt0.time,
+            "impact_mass" :row_alt0.mass,
+            "impact_speed" :row_alt0.velocity
         }
         return outcome
+
+# x = Planet()
+# result, outcome = x.impact(120.,20e3, 3000, 1e3, 30, init_altitude=100e3, dt=0.05)
+# # print(result['altitude'])
+# # print(result)
+# # outcome = x.analyse_outcome(result)
+# print(outcome)
+# plt.plot(result['altitude'], result['dedz'])
+# plt.grid()
+# plt.show()
