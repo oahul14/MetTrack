@@ -1,5 +1,7 @@
+
 from collections import OrderedDict
 import pandas as pd
+
 from pytest import fixture
 
 # Use pytest fixtures to generate objects we know we'll reuse.
@@ -36,7 +38,6 @@ def result(planet, input_data):
     result = planet.solve_atmospheric_entry(**input_data)
 
     return result
-
 
 def test_import(armageddon):
     """Check package imports"""
@@ -101,11 +102,11 @@ def test_analyse_outcome(planet, result):
 
 def test_ensemble(planet, armageddon):
 
-    fiducial_impact = {'radius': 0.0,
-                       'angle': 0.0,
-                       'strength': 0.0,
-                       'velocity': 0.0,
-                       'density': 0.0}
+    fiducial_impact = {
+        'radius': 10, 'angle': 45,
+        'velocity': 20e3, 'density':3000.,
+        'strength':1e5
+        }
     
     ensemble = armageddon.ensemble.solve_ensemble(planet,
                                                   fiducial_impact,
